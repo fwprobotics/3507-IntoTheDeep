@@ -17,12 +17,15 @@ public class FieldTrajectoryPlanner {
     }
 
     public FieldTrajectoryPlanner dropSpecimen() {
-        builder = builder.strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 40*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
+        builder = builder.strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 40*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
+                .stopAndAdd(new SleepAction(0.75))
+                .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 44*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
+
         return this;
     }
 
     public FieldTrajectoryPlanner pickNeutral(int number) {
-        builder = builder.strafeToLinearHeading(new Vector2d((48+(10*number))*robot.autoPos.yMult, 40*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
+        builder = builder.strafeToLinearHeading(new Vector2d((48+(11*number))*robot.autoPos.yMult, 42*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
         builder = builder.stopAndAdd(new SleepAction(1));
         return this;
     }

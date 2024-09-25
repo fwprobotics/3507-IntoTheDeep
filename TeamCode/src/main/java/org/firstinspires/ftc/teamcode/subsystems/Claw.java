@@ -9,23 +9,28 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Claw extends Subsystem{
 
     public enum ClawStates {
-        OPEN (1),
-        CLOSE (0);
+        OPEN (0.5, 0),
+        CLOSE (0, 0.5);
 
-        public double setPos;
+        public double rightSetPos;
+        public double leftSetPos;
 
-        ClawStates(double setPos) {
-            this.setPos = setPos;
+        ClawStates(double setPos, double leftSetPos) {
+            this.rightSetPos = setPos;
+            this.leftSetPos = leftSetPos;
         }
     }
 
-    Servo claw;
+    Servo rightClaw;
+    Servo leftClaw;
     public Claw(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap, telemetry);
-        claw = hardwareMap.servo.get("clawServo");
+        rightClaw = hardwareMap.servo.get("rightClawServo");
+        leftClaw = hardwareMap.servo.get("leftClawServo");
     }
     public void setPosition(ClawStates state) {
-        claw.setPosition(state.setPos);
+        rightClaw.setPosition(state.rightSetPos);
+        leftClaw.setPosition(state.leftSetPos);
     }
 
     public Action clawAction(ClawStates state) {

@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,14 +17,17 @@ public class Lift extends Subsystem {
 
     @Config
     public static class LiftConfig {
-        public static double liftPower = 0.8;
+        public static double liftPower = 1;
+        public static double liftStep = 10;
     }
 
     public enum LiftStates {
         FLOOR(0),
         SPECIMEN(500),
-        LOW (1000),
-        HIGH (1500);
+        LOW_CHAMBER (700),
+        HANG(800),
+        LOW_BASKET (1585),
+        HIGH_BASKET (3400);
 
 
         public int setPos;
@@ -40,12 +44,14 @@ public class Lift extends Subsystem {
         super(hardwareMap, telemetry);
         leftLift = hardwareMap.dcMotor.get("leftLiftMotor");
         rightLift = hardwareMap.dcMotor.get("rightLiftMotor");
+        leftLift.setDirection(DcMotorSimple.Direction.REVERSE);
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftLift.setTargetPosition(setPosition);
         rightLift.setTargetPosition(setPosition);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         leftLift.setPower(LiftConfig.liftPower);
         rightLift.setPower(LiftConfig.liftPower);
 
@@ -64,10 +70,27 @@ public class Lift extends Subsystem {
         };
     }
 
-    public void manualControl(double power) {
-        setPosition += (int) Math.ceil(power*5);
+    public Action liftAdjustAction(int pos) {
+        return telemetryPacket -> {
+            setPosition += pos;
+            leftLift.setTargetPosition(setPosition);
+            rightLift.setTargetPosition(setPosition);
+            return false;
+        };
+    }
+
+    public void manualControl(double power, boolean liftUp, boolean liftDown) {
+        setPosition += (int) Math.ceil(power*-LiftConfig.liftStep);
+//        if (liftUp) {
+//            setPosition = LiftStates.HIGH_BASKET.setPos;
+//        }
+//        if (liftDown) {
+//            setPosition = LiftStates.FLOOR.setPos;
+//        }
         leftLift.setTargetPosition(setPosition);
         rightLift.setTargetPosition(setPosition);
+
+
         telemetry.addData("lift pos", setPosition);
     }
 

@@ -6,10 +6,10 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class Robot {
 
     public  enum AutoPos {
-        REDRIGHT (1, -1),
-        REDLEFT (-1, -1),
-        BLUERIGHT (-1, 1),
-        BLUELEFT (1, 1);
+        REDHUMAN (1, -1),
+        REDNET (-1, -1),
+        BLUEHUMAN (-1, 1),
+        BLUENET (1, 1);
 
         public int xMult;
         public int yMult;
@@ -28,7 +28,8 @@ public class Robot {
         this.autoPos = pos;
     }
 
-    public FieldTrajectoryPlanner createTrajectoryPlanner(Pose2d startingPos) {
+    public FieldTrajectoryPlanner createTrajectoryPlanner() {
+        Pose2d startingPos = new Pose2d(9*autoPos.xMult, 63* autoPos.yMult, Math.toRadians(-90* autoPos.yMult));
         return new FieldTrajectoryPlanner(this, startingPos);
     }
 }

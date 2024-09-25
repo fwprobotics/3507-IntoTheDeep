@@ -10,7 +10,9 @@ public class Arm extends Subsystem {
 
     public enum ArmStates {
         STORED (0),
-        OUT (1);
+        OUT (0.5),
+
+        INTAKE(0.69); //0.85
 
         public double setPos;
 
@@ -22,6 +24,7 @@ public class Arm extends Subsystem {
     Servo arm;
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap, telemetry);
+        arm = hardwareMap.servo.get("armServo");
     }
 
     public void setState(ArmStates state) {
