@@ -23,12 +23,13 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner dropSpecimen() {
         builder = builder.afterTime(0.1, robot.robotAction(Robot.RobotStates.HIGH_CHAMBER))
-                .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 41*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
+                .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 41.5*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.5),
                         robot.lift.liftAdjustAction(-400),
                         new SleepAction(1.5),
-                        robot.claw.clawAction(Claw.ClawStates.OPEN)
+                        robot.claw.clawAction(Claw.ClawStates.OPEN),
+                        new SleepAction(0.5)
                 ))
                 .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 44*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
 
@@ -38,20 +39,25 @@ public class FieldTrajectoryPlanner {
     public FieldTrajectoryPlanner pickNeutral(int number) {
         builder = builder
                 .afterTime(2, robot.robotAction(Robot.RobotStates.INTAKE))
-                .strafeToLinearHeading(new Vector2d((48+(11*number))*robot.autoPos.yMult, 40*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
+                .strafeToLinearHeading(new Vector2d((48+(10*number))*robot.autoPos.yMult, 45*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.5),
-                        robot.claw.clawAction(Claw.ClawStates.CLOSE)
+                        new SleepAction(3),
+                        robot.claw.clawAction(Claw.ClawStates.CLOSE),
+                        new SleepAction(1)
                 ));
         return this;
     }
 
     public FieldTrajectoryPlanner dropNet() {
-        builder = builder.afterTime(0.5, robot.robotAction(Robot.RobotStates.HIGH_BASKET))
-                .strafeToLinearHeading(new Vector2d(52*robot.autoPos.yMult, 52*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 225))
+        builder = builder.stopAndAdd(
+                        new SequentialAction(
+                        robot.robotAction(Robot.RobotStates.HIGH_BASKET),
+                        new SleepAction(1.5)))
+                .strafeToLinearHeading(new Vector2d(54*robot.autoPos.yMult, 52*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 225))
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(0.5),
-                        robot.claw.clawAction(Claw.ClawStates.OPEN)
+                        new SleepAction(0.75),
+                        robot.claw.clawAction(Claw.ClawStates.OPEN),
+                        new SleepAction(0.25)
                 ));
         return this;
     }
@@ -59,6 +65,7 @@ public class FieldTrajectoryPlanner {
     public FieldTrajectoryPlanner ascend() {
         builder = builder
                 .afterTime(1, robot.robotAction(Robot.RobotStates.DEFAULT))
+                .strafeToLinearHeading(new Vector2d(36*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0))
                 .strafeToLinearHeading(new Vector2d(23*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0));
         return this;
     }

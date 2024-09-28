@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.autonomous.FieldTrajectoryPlanner;
+import org.firstinspires.ftc.teamcode.pipelines.HuskySampleDetect;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -56,6 +57,7 @@ public class Robot {
     public Arm arm;
     public Wrist wrist;
     public Claw claw;
+    public HuskySampleDetect huskyLens;
     public MecanumDrive drive;
 
     public AutoPos autoPos;
@@ -67,7 +69,8 @@ public class Robot {
         this.arm = new Arm(hardwareMap, telemetry);
         this.wrist = new Wrist(hardwareMap, telemetry);
         this.claw = new Claw(hardwareMap, telemetry);
-        this.startingPos = new Pose2d(9*autoPos.xMult, 63* autoPos.yMult, Math.toRadians(-90* autoPos.yMult));
+        this.huskyLens = new HuskySampleDetect(hardwareMap, telemetry);
+        this.startingPos = new Pose2d(10*autoPos.xMult, 63* autoPos.yMult, Math.toRadians(-90* autoPos.yMult));
         this.drive = new MecanumDrive(hardwareMap, startingPos);
         this.autoPos = autoPos;
 
