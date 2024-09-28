@@ -38,7 +38,7 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner pickNeutral(int number) {
         builder = builder
-                .afterTime(2, robot.robotAction(Robot.RobotStates.INTAKE))
+                .afterTime(.75+(number*1.25), new SequentialAction(robot.robotAction(Robot.RobotStates.INTAKE), robot.claw.clawAction(Claw.ClawStates.OPEN)))
                 .strafeToLinearHeading(new Vector2d((48+(10*number))*robot.autoPos.yMult, 45*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(3),

@@ -78,6 +78,7 @@ public class Robot {
 
     public Action robotAction(RobotStates state) {
         return new SequentialAction(
+                this.claw.clawAction(Claw.ClawStates.CLOSE),
                 this.lift.liftAction(state.liftState),
                 this.arm.armAction(state.armState),
                 this.wrist.wristAction(state.wristState)
