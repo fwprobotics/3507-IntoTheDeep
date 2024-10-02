@@ -62,6 +62,8 @@ public class Robot {
 
     public AutoPos autoPos;
 
+    public RobotStates currentState = RobotStates.DEFAULT;
+
     public Pose2d startingPos;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, AutoPos autoPos) {
@@ -77,6 +79,7 @@ public class Robot {
     }
 
     public Action robotAction(RobotStates state) {
+        currentState = state;
         return new SequentialAction(
                 this.claw.clawAction(Claw.ClawStates.CLOSE),
                 this.lift.liftAction(state.liftState),
