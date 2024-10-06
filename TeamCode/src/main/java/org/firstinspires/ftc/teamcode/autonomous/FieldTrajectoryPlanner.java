@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 
 public class FieldTrajectoryPlanner {
@@ -27,7 +28,7 @@ public class FieldTrajectoryPlanner {
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.5),
                         robot.lift.liftAdjustAction(-400),
-                        new SleepAction(1.5),
+                        new SleepAction(.5),
                         robot.claw.clawAction(Claw.ClawStates.OPEN),
                         new SleepAction(0.5)
                 ))
@@ -38,10 +39,10 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner pickNeutral(int number) {
         builder = builder
-                .afterTime(.5+(number*1.4), new SequentialAction(robot.robotAction(Robot.RobotStates.INTAKE), robot.claw.clawAction(Claw.ClawStates.OPEN)))
-                .strafeToLinearHeading(new Vector2d((48+(10*number))*robot.autoPos.yMult, 44*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
+                .afterTime(1, new SequentialAction(robot.robotAction(Robot.RobotStates.INTAKE), robot.claw.clawAction(Claw.ClawStates.OPEN)))
+                .strafeToLinearHeading(new Vector2d((48+(10*number)+(number < 2 ? 0: -10))*robot.autoPos.yMult, (44+(number < 2 ? 0 : -4))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-125*robot.autoPos.yMult) )
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(3),
+                        new SleepAction(.5+(number < 1 ? 0 : 1.4)),
                         robot.claw.clawAction(Claw.ClawStates.CLOSE),
                         new SleepAction(1)
                 ));
@@ -67,6 +68,19 @@ public class FieldTrajectoryPlanner {
                 .afterTime(1, robot.robotAction(Robot.RobotStates.DEFAULT))
                 .strafeToLinearHeading(new Vector2d(36*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0))
                 .strafeToLinearHeading(new Vector2d(23*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0));
+        return this;
+    }
+
+    public FieldTrajectoryPlanner park() {
+        builder = builder
+                .stopAndAdd(new SequentialAction(
+                        robot.arm.armAction(Arm.ArmStates.STORED),
+                        new SleepAction(0.5),
+                        robot.robotAction(Robot.RobotStates.DEFAULT),
+                        new SleepAction(2)
+                ));
+//                .strafeToLinearHeading(new Vector2d(36*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0))
+//                .strafeToLinearHeading(new Vector2d(23*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0));
         return this;
     }
 }

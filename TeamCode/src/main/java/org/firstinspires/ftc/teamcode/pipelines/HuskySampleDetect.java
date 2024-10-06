@@ -73,10 +73,10 @@ public class HuskySampleDetect {
         return telemetryPacket -> {
             HuskyLens.Block block = getNearestSample();
             if (block != null) {
-//                telemetry.log().add("Distance x: " + (Math.abs(block.x - 160)));
+                telemetry.log().add("Distance x: " + (Math.abs(block.x - 160)));
 //                telemetry.log().add("Distance y: " + (Math.abs(block.y - 120)));
 //                telemetry.log().add("Distance from center: " + (Math.hypot(block.x - 160, block.y - 120)));
-                if (Math.hypot(- block.x + center.x , - block.y + ( center.y  + offsetY)) < 35) {
+                if (Math.hypot(- block.x + center.x , - block.y + ( center.y  + offsetY)) < 60) {
                     robot.drive.setDrivePowers(new PoseVelocity2d(
                             new Vector2d(0, 0), 0
                     ));
@@ -84,7 +84,7 @@ public class HuskySampleDetect {
                     return false;
                 }
                 robot.drive.setDrivePowers(new PoseVelocity2d(
-                        new Vector2d((center.y -  block.y ) * 0.15, (center.x - block.x) * 0.15), 0
+                        new Vector2d((center.y -  block.y ) * 0.002, (center.x - block.x) * 0.002), 0
                 ));
             }
             return true;

@@ -36,7 +36,10 @@ public class Meet1Auto extends LinearOpMode {
                 .dropNet()
                 .pickNeutral(1)
                 .dropNet()
-                .ascend()
+                .pickNeutral(2)
+                .dropNet()
+                .park()
+              //  .ascend()
                 .builder.build();
 
         Actions.runBlocking(robot.robotAction(Robot.RobotStates.DEFAULT));

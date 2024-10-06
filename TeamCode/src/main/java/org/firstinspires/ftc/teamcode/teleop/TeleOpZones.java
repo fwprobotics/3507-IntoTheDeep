@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
@@ -14,10 +16,12 @@ public class TeleOpZones extends LinearOpMode {
     TeleopActionRunner actionRunner;
     Robot robot;
     public enum Zones {
-        NET (new Pose2d(52, 54, Math.toDegrees(215)), new Pose2d(72, 72, Math.toDegrees(235))),
-        TRANSFER (new Pose2d(36, 36, Math.toDegrees(0)), new Pose2d(45, 45, Math.toDegrees(360))),
+        NET (new Pose2d(50, 50, Math.toRadians(215)), new Pose2d(72, 72, Math.toRadians(235))),
+        TRANSFER (new Pose2d(36, 36, Math.toRadians(0)), new Pose2d(47, 47, Math.toRadians(360))),
 
-        SUBMERSIBLE_SIDE (new Pose2d(0, 0, Math.toDegrees(0)), new Pose2d(36, 24, Math.toDegrees(360)));
+        SUBMERSIBLE_SIDE (new Pose2d(0, 0, Math.toRadians(0)), new Pose2d(30, 24, Math.toRadians(360))),
+        HUMAN (new Pose2d(-72, 48, Math.toRadians(0)), new Pose2d(-36, 72, Math.toRadians(360))),
+        SPECIMEN(new Pose2d(-24, 12, Math.toRadians(0)), new Pose2d(24, 48, Math.toRadians(0)));
 
         public Pose2d minPose;
         public Pose2d maxPose;
@@ -29,7 +33,7 @@ public class TeleOpZones extends LinearOpMode {
 
     }
 
-    Zones currentZone;
+    Zones currentZone = Zones.SUBMERSIBLE_SIDE;
     Robot.AutoPos autoCorner = Robot.AutoPos.REDNET;
 
     @Override
@@ -46,17 +50,17 @@ public class TeleOpZones extends LinearOpMode {
                 drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             }
             robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down);
-            if (gamepad2.dpad_down) {
+            if (gamepad1.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
             } else if (gamepad2.dpad_up) {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
-            } else if (gamepad2.dpad_left) {
+            } else if (gamepad1.dpad_left) {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKE));
             }
 
-            if (gamepad2.a) {
+            if (gamepad1.a) {
                 robot.claw.setPosition(Claw.ClawStates.CLOSE);
-            } else if (gamepad2.b) {
+            } else if (gamepad1.b) {
                 robot.claw.setPosition(Claw.ClawStates.OPEN);
             }
 
@@ -65,19 +69,21 @@ public class TeleOpZones extends LinearOpMode {
             } else if (gamepad2.x) {
                 robot.wrist.setWristState(Wrist.WristStates.DOWN);
             }
-            if (gamepad2.touchpad && !actionRunner.isBusy()) {
+            if (gamepad1.touchpad && (!actionRunner.isBusy() || gamepad1.y)) {
                 actionRunner.addAction(robot.huskyLens.pickUpAction(robot));
             }
 
 //            if (Math.abs(robot.drive.pose.position.x) > 54 && Math.abs(robot.drive.pose.position.y) > 52 && Math.abs((Math.toDegrees(robot.drive.pose.heading.toDouble())%360)-225) < 10 && robot.currentState == Robot.RobotStates.HIGH_BASKET) {
 //                robot.claw.setPosition(Claw.ClawStates.OPEN);
 //            }
-            processZone(robot.drive.pose);
+
 
             robot.drive.updatePoseEstimate();
+            processZone(robot.drive.pose);
             telemetry.addData("x", robot.drive.pose.position.x);
             telemetry.addData("y", robot.drive.pose.position.y);
-            telemetry.addData("heading (deg)", Math.toDegrees(robot.drive.pose.heading.toDouble()));
+            double norm_ang = Math.toDegrees(robot.drive.pose.heading.toDouble()) < 0 ? 360 + Math.toDegrees(robot.drive.pose.heading.toDouble()): Math.toDegrees(robot.drive.pose.heading.toDouble());
+            telemetry.addData("heading (deg)", norm_ang);
             actionRunner.update();
             telemetry.update();
         }
@@ -90,7 +96,14 @@ public class TeleOpZones extends LinearOpMode {
             return Zones.TRANSFER;
         } else if (betweenPose(Zones.NET.minPose, Zones.NET.maxPose, currentPos)) {
             return Zones.NET;
-        } else {
+        } else if (betweenPose(Zones.HUMAN.minPose, Zones.HUMAN.maxPose, currentPos)) {
+            return Zones.HUMAN;
+        }
+     else if (betweenPose(Zones.SPECIMEN.minPose, Zones.SPECIMEN.maxPose, currentPos)) {
+        return Zones.SPECIMEN;
+    }
+
+        else {
             return currentZone;
         }
     }
@@ -100,7 +113,11 @@ public class TeleOpZones extends LinearOpMode {
         if (currentZone != newZone) {
             telemetry.addData("old zone", currentZone);
             if (newZone == Zones.SUBMERSIBLE_SIDE) {
-                actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKE));
+                actionRunner.addAction(new SequentialAction(
+                        robot.robotAction(
+                        Robot.RobotStates.INTAKE),
+                        new SleepAction(0.5),
+                        robot.claw.clawAction(Claw.ClawStates.OPEN)));
             } else if (newZone == Zones.TRANSFER) {
                 if (currentZone == Zones.SUBMERSIBLE_SIDE) {
                     actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
@@ -108,7 +125,13 @@ public class TeleOpZones extends LinearOpMode {
                     actionRunner.addAction((robot.robotAction(Robot.RobotStates.DEFAULT)));
                 }
             } else if (newZone == Zones.NET) {
-                robot.claw.setPosition(Claw.ClawStates.OPEN);
+                if (currentZone == Zones.TRANSFER) {
+                    robot.claw.setPosition(Claw.ClawStates.OPEN);
+                }
+            } else if (newZone == Zones.HUMAN) {
+                actionRunner.addAction(robot.robotAction(Robot.RobotStates.SPECIMEN));
+            } else if (newZone == Zones.SPECIMEN) {
+                actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
             }
 
             currentZone = newZone;
@@ -117,6 +140,12 @@ public class TeleOpZones extends LinearOpMode {
     }
 
     boolean betweenPose(Pose2d pose1, Pose2d pose2, Pose2d pose) {
-        return (pose1.position.x* autoCorner.yMult <= pose.position.x && pose2.position.x*autoCorner.yMult >= pose.position.x) && (pose1.position.y* autoCorner.yMult <= pose.position.y && pose2.position.y* autoCorner.yMult >= pose.position.y) && ((Math.toDegrees(pose1.heading.toDouble())+ (autoCorner.yMult > 0 ? 180 : 0))%360 <= Math.toDegrees(pose.heading.toDouble())%360 && Math.toDegrees(pose2.heading.toDouble())%360 >= Math.toDegrees(pose.heading.toDouble()+ (autoCorner.yMult > 0 ? 180 : 0))%360);
+        double norm_ang = Math.toDegrees(pose.heading.toDouble()) < 0 ? 360 + Math.toDegrees(pose.heading.toDouble()): Math.toDegrees(pose.heading.toDouble());
+        telemetry.log().add("min angle: "+(Math.toDegrees(pose1.heading.toDouble()))%360);
+        //     telemetry.log().add("min pose: "+pose1.position.times(autoCorner.yMult)+ " max pose: "+pose2.position.times(autoCorner.yMult)+" currentPose "+pose);
+        return (pose1.position.x <= pose.position.x* autoCorner.yMult && pose2.position.x >= pose.position.x* autoCorner.yMult) && (pose1.position.y <= pose.position.y* autoCorner.yMult && pose2.position.y>= pose.position.y* autoCorner.yMult) && ((Math.toDegrees(pose1.heading.toDouble())) <= Math.toDegrees(norm_ang+ (autoCorner.yMult > 0 ? 180 : 0))%360 && Math.toDegrees(pose2.heading.toDouble()) >= Math.toDegrees(norm_ang+ (autoCorner.yMult > 0 ? 180 : 0))%360)
+                ;
+
+        // && ((Math.toDegrees(pose1.heading.toDouble())+ (autoCorner.yMult > 0 ? 180 : 0))%360 <= Math.toDegrees(pose.heading.toDouble())%360 && Math.toDegrees(pose2.heading.toDouble())%360 >= Math.toDegrees(pose.heading.toDouble()+ (autoCorner.yMult > 0 ? 180 : 0))%360
     }
 }

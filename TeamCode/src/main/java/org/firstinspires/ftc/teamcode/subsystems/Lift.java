@@ -23,7 +23,7 @@ public class Lift extends Subsystem {
 
     public enum LiftStates {
         FLOOR(0),
-        SPECIMEN(500),
+        SPECIMEN(75),
         LOW_CHAMBER (700),
         HANG(800),
         LOW_BASKET (1585),
