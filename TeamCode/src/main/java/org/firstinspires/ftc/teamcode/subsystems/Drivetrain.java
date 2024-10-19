@@ -99,7 +99,7 @@ public class Drivetrain {
         double backLeftVal;
         double backRightVal;
 
-        double slowModeMult = slowModeControl ? 0.3 : 1;
+        double slowModeMult = slowModeControl ? 0.4 : 1;
         double boostModeMult = boostButton ? 1.5 : 1;
 
 

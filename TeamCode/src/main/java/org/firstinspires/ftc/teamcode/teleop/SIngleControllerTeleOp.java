@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.TeleopActionRunner;
 import org.firstinspires.ftc.teamcode.util.ToggleButton;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class TeleOpZones extends LinearOpMode {
+public class SIngleControllerTeleOp extends LinearOpMode {
     TeleopActionRunner actionRunner;
     Robot robot;
     public enum Zones {
@@ -56,18 +56,18 @@ public class TeleOpZones extends LinearOpMode {
                 drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             }
             robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down);
-            if (gamepad2.dpad_down) {
+            if (gamepad1.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
-            } else if (gamepad2.dpad_up) {
+            } else if (gamepad1.dpad_up) {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
-            } else if (gamepad2.dpad_left) {
+            } else if (gamepad1.dpad_left) {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKE));
             }
-            clawClose.toggle(gamepad2.a);
+            clawClose.toggle(gamepad1.a);
             if (clawClose.newPress) {
                 robot.claw.setPosition(Claw.ClawStates.CLOSE);
                 actionRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawAction(robot)));
-            } else if (gamepad2.b) {
+            } else if (gamepad1.b) {
                 robot.claw.setPosition(Claw.ClawStates.OPEN);
             }
 
@@ -84,7 +84,7 @@ public class TeleOpZones extends LinearOpMode {
 //                robot.claw.setPosition(Claw.ClawStates.OPEN);
 //            }
 
-            zoneBased.toggle(gamepad2.right_bumper);
+         //   zoneBased.toggle(gamepad1.right_bumper);
 
             if (zoneBased.newPress) {
                 usedZoneBased = !usedZoneBased;
@@ -137,11 +137,11 @@ public class TeleOpZones extends LinearOpMode {
         if (currentZone != newZone) {
             telemetry.addData("old zone", currentZone);
             if (newZone == Zones.SUBMERSIBLE_SIDE) {
-//                actionRunner.addAction(new SequentialAction(
-//                        robot.robotAction(
-//                        Robot.RobotStates.INTAKE),
-//                        new SleepAction(0.5),
-//                        robot.claw.clawAction(Claw.ClawStates.OPEN)));
+                actionRunner.addAction(new SequentialAction(
+                        robot.robotAction(
+                        Robot.RobotStates.INTAKE),
+                        new SleepAction(0.1),
+                        robot.claw.clawAction(Claw.ClawStates.OPEN)));
             } else if (newZone == Zones.TRANSFER) {
                 if (currentZone == Zones.SUBMERSIBLE_SIDE || currentZone == Zones.DEFAULT_AUD || currentZone == Zones.DEFAULT_DRIVER) {
                     actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));

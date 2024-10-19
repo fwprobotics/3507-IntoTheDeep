@@ -88,6 +88,14 @@ public class Robot {
         );
     }
 
+    public void setRobotState(RobotStates state) {
+        currentState = state;
+       claw.setPosition(Claw.ClawStates.CLOSE);
+       arm.setState(state.armState);
+       wrist.setWristState(state.wristState);
+       lift.setState(state.liftState);
+    }
+
     public FieldTrajectoryPlanner createTrajectoryPlanner() {
         return new FieldTrajectoryPlanner(this);
     }
