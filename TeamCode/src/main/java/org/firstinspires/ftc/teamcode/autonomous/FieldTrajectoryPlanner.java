@@ -40,11 +40,11 @@ public class FieldTrajectoryPlanner {
     public FieldTrajectoryPlanner pickNeutral(int number) {
         builder = builder
                 .afterTime(1, new SequentialAction(robot.robotAction(Robot.RobotStates.INTAKE), robot.claw.clawAction(Claw.ClawStates.OPEN)))
-                .strafeToLinearHeading(new Vector2d((48+(10*number)+(number < 2 ? 0: -10))*robot.autoPos.yMult, (44+(number < 2 ? 0 : -4))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-125*robot.autoPos.yMult) )
+                .strafeToLinearHeading(new Vector2d((48+(9.6*number)+(number < 2 ? 0: -10))*robot.autoPos.yMult, (44.5+(number < 2 ? 0 : -4))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-125*robot.autoPos.yMult) )
                 .stopAndAdd(new SequentialAction(
-                        new SleepAction(.5+(number < 1 ? 0 : 1.4)),
+                        new SleepAction(.5+(number < 1 ? 0 : 1.5)),
                         robot.claw.clawAction(Claw.ClawStates.CLOSE),
-                        new SleepAction(1)
+                        new SleepAction(0.75)
                 ));
         return this;
     }

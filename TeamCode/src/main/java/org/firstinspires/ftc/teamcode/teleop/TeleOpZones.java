@@ -36,7 +36,7 @@ public class TeleOpZones extends LinearOpMode {
 
     }
 
-    Zones currentZone = Zones.SUBMERSIBLE_SIDE;
+    Zones currentZone = Zones.TRANSFER;
     Robot.AutoPos autoCorner = Robot.AutoPos.REDNET;
     boolean usedZoneBased = true;
 
@@ -47,7 +47,7 @@ public class TeleOpZones extends LinearOpMode {
          actionRunner = new TeleopActionRunner();
 //        Arm arm = new Arm(hardwareMap, telemetry);
          robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET);
-        robot.drive.pose = new Pose2d(-23, -10, 0);
+        robot.drive.pose = new Pose2d(-54, -52, Math.toRadians(225));
         ToggleButton zoneBased = new ToggleButton(true);
         ToggleButton clawClose = new ToggleButton(false);
         waitForStart();
