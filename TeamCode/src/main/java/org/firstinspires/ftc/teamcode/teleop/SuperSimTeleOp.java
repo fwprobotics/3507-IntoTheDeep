@@ -3,21 +3,21 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.subsystems.Hang;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.util.TeleopActionRunner;
 import org.firstinspires.ftc.teamcode.util.ToggleButton;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class TeleOpZones extends LinearOpMode {
+public class SuperSimTeleOp extends LinearOpMode {
     TeleopActionRunner actionRunner;
 
-    //TeleopActionRunner driverRunner;
+    TeleopActionRunner driverRunner;
     Robot robot;
     public enum Zones {
         NET (new Pose2d(50, 50, Math.toRadians(215)), new Pose2d(72, 72, Math.toRadians(235))),
@@ -48,15 +48,15 @@ public class TeleOpZones extends LinearOpMode {
         Drivetrain drivetrain = new Drivetrain(this, hardwareMap, telemetry);
 //        Lift lift = new Lift(hardwareMap, telemetry);
          actionRunner = new TeleopActionRunner();
+         driverRunner = new TeleopActionRunner();
 //        Arm arm = new Arm(hardwareMap, telemetry);
          robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET);
-         Hang hang = new Hang(hardwareMap, telemetry);
         robot.drive.pose = new Pose2d(-54, -52, Math.toRadians(225));
         ToggleButton zoneBased = new ToggleButton(true);
         ToggleButton clawClose = new ToggleButton(false);
         waitForStart();
         while (!isStopRequested()) {
-            if (!gamepad1.touchpad ) {
+            if (!gamepad1.touchpad && !driverRunner.isBusy()) {
                 drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             }
             robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down);
@@ -70,7 +70,10 @@ public class TeleOpZones extends LinearOpMode {
             clawClose.toggle(gamepad2.a);
             if (clawClose.newPress) {
                 robot.claw.setPosition(Claw.ClawStates.CLOSE);
-                actionRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawAction(robot)));
+                driverRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawActionSuper(robot),
+
+                        robot.claw.clawAction(Claw.ClawStates.OPEN)
+                        ));
             } else if (gamepad2.b) {
                 robot.claw.setPosition(Claw.ClawStates.OPEN);
             }
@@ -87,7 +90,6 @@ public class TeleOpZones extends LinearOpMode {
 //            if (Math.abs(robot.drive.pose.position.x) > 54 && Math.abs(robot.drive.pose.position.y) > 52 && Math.abs((Math.toDegrees(robot.drive.pose.heading.toDouble())%360)-225) < 10 && robot.currentState == Robot.RobotStates.HIGH_BASKET) {
 //                robot.claw.setPosition(Claw.ClawStates.OPEN);
 //            }
-            hang.manualControl(-gamepad2.right_stick_y);
 
             zoneBased.toggle(gamepad2.right_bumper);
 
@@ -96,7 +98,7 @@ public class TeleOpZones extends LinearOpMode {
             }
             robot.drive.updatePoseEstimate();
 
-            if (usedZoneBased) {
+            if (usedZoneBased && !driverRunner.isBusy()) {
                 processZone(robot.drive.pose);
                 gamepad2.setLedColor(255, 0, 0, 10);
             } else {
@@ -109,6 +111,7 @@ public class TeleOpZones extends LinearOpMode {
             double norm_ang = Math.toDegrees(robot.drive.pose.heading.toDouble()) < 0 ? 360 + Math.toDegrees(robot.drive.pose.heading.toDouble()): Math.toDegrees(robot.drive.pose.heading.toDouble());
             telemetry.addData("heading (deg)", norm_ang);
             telemetry.addData("clawPos", robot.claw.getPos());
+            driverRunner.update();
             actionRunner.update();
             telemetry.update();
         }
@@ -158,7 +161,7 @@ public class TeleOpZones extends LinearOpMode {
                 //    robot.claw.setPosition(Claw.ClawStates.OPEN);
                 }
             } else if (newZone == Zones.HUMAN) {
-            //    actionRunner.addAction(robot.robotAction(Robot.RobotStates.SPECIMEN));
+                actionRunner.addAction(robot.robotAction(Robot.RobotStates.SPECIMEN));
             } else if (newZone == Zones.SPECIMEN) {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
             } else if (newZone == Zones.DEFAULT_AUD || newZone == Zones.DEFAULT_DRIVER) {

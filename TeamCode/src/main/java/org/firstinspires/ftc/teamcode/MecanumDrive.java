@@ -259,6 +259,29 @@ public final class MecanumDrive {
         rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
+    public class CancelableFollowTrajectoryAction implements Action {
+        private final FollowTrajectoryAction action;
+        private boolean cancelled = false;
+
+        public CancelableFollowTrajectoryAction(TimeTrajectory t) {
+            action = new FollowTrajectoryAction(t);
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (cancelled) {
+                setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
+                return false;
+            }
+
+            return action.run(telemetryPacket);
+        }
+
+        public void cancelAbruptly() {
+            cancelled = true;
+        }
+    }
+
     public final class FollowTrajectoryAction implements Action {
         public final TimeTrajectory timeTrajectory;
         private double beginTs = -1;
@@ -473,6 +496,8 @@ public final class MecanumDrive {
         c.setStroke("#3F51B5");
         c.strokePolyline(xPoints, yPoints);
     }
+
+
 
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
         return new TrajectoryActionBuilder(

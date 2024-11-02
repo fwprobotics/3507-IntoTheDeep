@@ -80,7 +80,7 @@ public class Drivetrain {
         frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        OpMode.idle();
+      //  OpMode.idle();
     }
 
     public static double clamp(double val, double min, double max) {
