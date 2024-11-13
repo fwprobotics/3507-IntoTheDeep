@@ -24,7 +24,7 @@ public class TeleOpZones extends LinearOpMode {
         TRANSFER (new Pose2d(36, 36, Math.toRadians(0)), new Pose2d(72, 72, Math.toRadians(360))),
 
         SUBMERSIBLE_SIDE (new Pose2d(0, 0, Math.toRadians(0)), new Pose2d(30, 24, Math.toRadians(360))),
-        HUMAN (new Pose2d(-72, 36, Math.toRadians(0)), new Pose2d(-36, 72, Math.toRadians(360))),
+        HUMAN (new Pose2d(-72, 40, Math.toRadians(0)), new Pose2d(-36, 72, Math.toRadians(360))),
         SPECIMEN(new Pose2d(-24, 12, Math.toRadians(75)), new Pose2d(24, 48, Math.toRadians(105))),
         DEFAULT_AUD(new Pose2d(36, -24, Math.toRadians(0)), new Pose2d(72, 24, Math.toRadians(360))),
         DEFAULT_DRIVER(new Pose2d(-72, 24, Math.toRadians(0)), new Pose2d(24, 72, Math.toRadians(360)));
@@ -158,7 +158,7 @@ public class TeleOpZones extends LinearOpMode {
                 //    robot.claw.setPosition(Claw.ClawStates.OPEN);
                 }
             } else if (newZone == Zones.HUMAN) {
-            //    actionRunner.addAction(robot.robotAction(Robot.RobotStates.SPECIMEN));
+                actionRunner.addAction(robot.robotAction(Robot.RobotStates.SPECIMEN));
             } else if (newZone == Zones.SPECIMEN) {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
             } else if (newZone == Zones.DEFAULT_AUD || newZone == Zones.DEFAULT_DRIVER) {
@@ -172,7 +172,7 @@ public class TeleOpZones extends LinearOpMode {
 
     boolean betweenPose(Pose2d pose1, Pose2d pose2, Pose2d pose) {
       //  double norm_ang = Math.toDegrees(pose.heading.toDouble()) < 0 ? 360 + Math.toDegrees(pose.heading.toDouble()): Math.toDegrees(pose.heading.toDouble());
-        telemetry.log().add("min angle: "+getNormAngle(pose1));
+   //     telemetry.log().add("min angle: "+getNormAngle(pose1));
         //     telemetry.log().add("min pose: "+pose1.position.times(autoCorner.yMult)+ " max pose: "+pose2.position.times(autoCorner.yMult)+" currentPose "+pose);
         return (pose1.position.x <= pose.position.x* autoCorner.yMult && pose2.position.x >= pose.position.x* autoCorner.yMult) &&
                 (pose1.position.y <= pose.position.y* autoCorner.yMult && pose2.position.y>= pose.position.y* autoCorner.yMult) &&

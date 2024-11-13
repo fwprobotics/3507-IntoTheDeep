@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -84,7 +86,8 @@ public class Robot {
                 this.claw.clawAction(Claw.ClawStates.CLOSE),
                 this.lift.liftAction(state.liftState),
                 this.arm.armAction(state.armState),
-                this.wrist.wristAction(state.wristState)
+                this.wrist.wristAction(state.wristState),
+                state.armState.setPos == Arm.ArmStates.INTAKE.setPos ? new SequentialAction(new SleepAction(0.1), this.claw.clawAction(Claw.ClawStates.OPEN)) : new InstantAction(() -> {})
         );
     }
 

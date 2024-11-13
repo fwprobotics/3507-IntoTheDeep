@@ -51,7 +51,7 @@ public class Claw extends Subsystem{
     public Action autoClawAction(Robot robot) {
         return (telemetryPacket) -> {
             telemetry.addData("CLAW POSS", getPos());
-            if (getPos() > 315) {
+            if (getPos() > 325) {
                 robot.setRobotState(Robot.RobotStates.DEFAULT);
             } else {
                 setPosition(ClawStates.OPEN);
@@ -66,14 +66,14 @@ public class Claw extends Subsystem{
                 .stopAndAdd(robot.robotAction(Robot.RobotStates.HIGH_BASKET))
                 .strafeToLinearHeading(new Vector2d(-54, -52), Math.toRadians(225))
                 .stopAndAdd(robot.claw.clawAction(ClawStates.OPEN))
-                //.strafeToLinearHeading(new Vector2d(-48, -12), Math.toRadians(0))
-              //  .stopAndAdd(robot.robotAction(Robot.RobotStates.DEFAULT))
-                //.strafeToLinearHeading(new Vector2d(-24, -12), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-48, -12), Math.toRadians(0))
+                .stopAndAdd(robot.robotAction(Robot.RobotStates.DEFAULT))
+                .strafeToLinearHeading(new Vector2d(-24, -8), Math.toRadians(0))
                 .build();
         AtomicBoolean isDriving = new AtomicBoolean(false);
         return (telemetryPacket) -> {
             telemetry.addData("CLAW POSS", getPos());
-            if (getPos() > 315) {
+            if (getPos() > 315 || isDriving.get()) {
                 if (!isDriving.get()) {
                     robot.setRobotState(Robot.RobotStates.DEFAULT);
                     isDriving.set(true);

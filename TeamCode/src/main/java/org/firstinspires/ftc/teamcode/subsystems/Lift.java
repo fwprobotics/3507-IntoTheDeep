@@ -79,6 +79,18 @@ public class Lift extends Subsystem {
         };
     }
 
+    public Action liftAdjustAction(int pos, double power) {
+        return telemetryPacket -> {
+            setPosition += pos;
+            leftLift.setPower(power);
+            rightLift.setPower(power);
+            leftLift.setTargetPosition(setPosition);
+            rightLift.setTargetPosition(setPosition);
+            return false;
+        };
+    }
+
+
     public void manualControl(double power, boolean liftUp, boolean liftDown) {
         setPosition += (int) Math.ceil(power*-LiftConfig.liftStep);
 //        if (liftUp) {
