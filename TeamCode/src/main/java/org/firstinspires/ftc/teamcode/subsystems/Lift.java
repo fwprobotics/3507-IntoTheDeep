@@ -18,14 +18,14 @@ public class Lift extends Subsystem {
     @Config
     public static class LiftConfig {
         public static double liftPower = 1;
-        public static double liftStep = 10;
+        public static double liftStep = 20;
     }
 
     public enum LiftStates {
         FLOOR(0),
         SPECIMEN(75),
         LOW_CHAMBER (700),
-        HANG(800),
+        HANG(900),
         LOW_BASKET (1585),
         HIGH_BASKET (3400);
 
@@ -40,13 +40,18 @@ public class Lift extends Subsystem {
     DcMotor rightLift;
 
     int setPosition = 0;
-    public Lift(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Lift(HardwareMap hardwareMap, Telemetry telemetry, boolean teleop) {
         super(hardwareMap, telemetry);
         leftLift = hardwareMap.dcMotor.get("leftLiftMotor");
         rightLift = hardwareMap.dcMotor.get("rightLiftMotor");
         leftLift.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (teleop) {
+           setPosition = 800;
+        } else {
+            leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         leftLift.setTargetPosition(setPosition);
         rightLift.setTargetPosition(setPosition);
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -62,6 +67,14 @@ public class Lift extends Subsystem {
         leftLift.setTargetPosition(state.setPos);
         rightLift.setTargetPosition(state.setPos);
     }
+
+//    public void teleOpReset() {
+////        leftLift.setTargetPosition(s);
+//        rightLift.setTargetPosition(-800);
+//        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//    }
 
     public Action liftAction(LiftStates state) {
         return telemetryPacket -> {
@@ -90,17 +103,28 @@ public class Lift extends Subsystem {
         };
     }
 
+    public void resetLiftEncoders() {
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
-    public void manualControl(double power, boolean liftUp, boolean liftDown) {
+
+    public void manualControl(double power, boolean liftUp, boolean liftDown, boolean reset) {
         setPosition += (int) Math.ceil(power*-LiftConfig.liftStep);
 //        if (liftUp) {
 //            setPosition = LiftStates.HIGH_BASKET.setPos;
 //        }
 //        if (liftDown) {
 //            setPosition = LiftStates.FLOOR.setPos;
-//        }
+//
         leftLift.setTargetPosition(setPosition);
         rightLift.setTargetPosition(setPosition);
+
+        if (reset) {
+            resetLiftEncoders();
+        }
 
 
         telemetry.addData("lift pos", setPosition);

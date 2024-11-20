@@ -49,17 +49,18 @@ public class TeleOpZones extends LinearOpMode {
 //        Lift lift = new Lift(hardwareMap, telemetry);
          actionRunner = new TeleopActionRunner();
 //        Arm arm = new Arm(hardwareMap, telemetry);
-         robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET);
+         robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET, true);
          Hang hang = new Hang(hardwareMap, telemetry);
-        robot.drive.pose = new Pose2d(-54, -52, Math.toRadians(225));
+        robot.drive.pose = new Pose2d(-23, -11, Math.toRadians(0));
         ToggleButton zoneBased = new ToggleButton(true);
         ToggleButton clawClose = new ToggleButton(false);
         waitForStart();
+        actionRunner.addAction(robot.robotAction(Robot.RobotStates.DEFAULT));
         while (!isStopRequested()) {
             if (!gamepad1.touchpad ) {
                 drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             }
-            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down);
+            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.touchpad);
             if (gamepad2.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
             } else if (gamepad2.dpad_up) {

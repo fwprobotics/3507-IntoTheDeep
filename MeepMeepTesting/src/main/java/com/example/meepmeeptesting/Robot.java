@@ -29,7 +29,7 @@ public class Robot {
     }
 
     public FieldTrajectoryPlanner createTrajectoryPlanner() {
-        Pose2d startingPos = new Pose2d(24*autoPos.xMult, 12* autoPos.yMult, Math.toRadians(0* autoPos.yMult));
+        Pose2d startingPos = new Pose2d(10*autoPos.xMult, 63* autoPos.yMult, Math.toRadians(-90* autoPos.yMult));
         return new FieldTrajectoryPlanner(this, startingPos);
     }
 }

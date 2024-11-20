@@ -27,7 +27,7 @@ public class Meet1AutoCursed extends LinearOpMode {
             telemetry.addData("starting pos", autoPos);
             telemetry.update();
         }
-        Robot robot = new Robot(hardwareMap, telemetry, autoPos );
+        Robot robot = new Robot(hardwareMap, telemetry, autoPos, false );
 
         Action autoAction = robot.createTrajectoryPlanner()
                 .dropSpecimen(0)

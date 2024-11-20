@@ -20,11 +20,11 @@ public class TeleOp extends LinearOpMode {
 //        Lift lift = new Lift(hardwareMap, telemetry);
         TeleopActionRunner actionRunner = new TeleopActionRunner();
 //        Arm arm = new Arm(hardwareMap, telemetry);
-        Robot robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET);
+        Robot robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET, true);
         waitForStart();
         while (!isStopRequested()) {
             drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
-            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down);
+            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.touchpad);
             if (gamepad2.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
             } else if (gamepad2.dpad_up) {

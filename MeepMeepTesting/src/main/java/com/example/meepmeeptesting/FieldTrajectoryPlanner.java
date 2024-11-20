@@ -2,8 +2,10 @@ package com.example.meepmeeptesting;
 
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 
 public class FieldTrajectoryPlanner {
@@ -17,26 +19,28 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner dropSpecimen() {
         builder = builder.strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 40*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
-                .stopAndAdd(new SleepAction(0.75))
+                .stopAndAdd(new SleepAction(2))
                 .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 44*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
 
         return this;
     }
 
     public FieldTrajectoryPlanner pickNeutral(int number) {
-        builder = builder.strafeToLinearHeading(new Vector2d((48+(11*number))*robot.autoPos.yMult, 42*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
-        builder = builder.stopAndAdd(new SleepAction(1));
+        builder = builder.strafeToLinearHeading(new Vector2d((48+(9.6*number)+(number < 2 ? 0: -9.6))*robot.autoPos.yMult, (44.5+(number < 2 ? 0 : -4.5))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-125*robot.autoPos.yMult) );
+        builder = builder.stopAndAdd(new SleepAction(3.25));
         return this;
     }
 
     public FieldTrajectoryPlanner dropNet() {
         builder = builder.strafeToLinearHeading(new Vector2d(52*robot.autoPos.yMult, 52*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 225));
-        builder = builder.stopAndAdd(new SleepAction(1));
+        builder = builder.stopAndAdd(new SleepAction(2));
         return this;
     }
 
     public FieldTrajectoryPlanner ascend() {
-        builder = builder.strafeToLinearHeading(new Vector2d(23*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0));
+        builder = builder  .setReversed(true)
+                .splineToLinearHeading(new Pose2d(-23, -11, Math.toRadians(0)), Math.toRadians(0), new TranslationalVelConstraint(100), new ProfileAccelConstraint(-20, 20))
+        ;
         return this;
     }
 

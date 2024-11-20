@@ -4,9 +4,11 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.teamcode.Robot;
@@ -27,7 +29,7 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner dropSpecimen() {
         builder = builder.afterTime(0.1, robot.robotAction(Robot.RobotStates.HIGH_CHAMBER))
-                .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 41.5*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
+                .strafeToLinearHeading(new Vector2d(8*robot.autoPos.xMult, 41.5*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.5),
                         robot.lift.liftAdjustAction(-400),
@@ -35,14 +37,16 @@ public class FieldTrajectoryPlanner {
                         robot.claw.clawAction(Claw.ClawStates.OPEN),
                         new SleepAction(0.5)
                 ))
-                .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 44*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
+                .strafeToLinearHeading(new Vector2d(8*robot.autoPos.xMult, 44*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
 
         return this;
     }
 
     public FieldTrajectoryPlanner dropSpecimen(int i) {
         builder = builder.stopAndAdd(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER))
-                .strafeToLinearHeading(new Vector2d((3+(i*1.4))*robot.autoPos.xMult, (42+(i > 0 ? -0.5 : 0))*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
+                .strafeToLinearHeading(new Vector2d((3+(i*2))*robot.autoPos.xMult, (44+(i > 0 ? -0.5 : 0))*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
+
+                .strafeToLinearHeading(new Vector2d((3+(i*2))*robot.autoPos.xMult, (42+(i > 0 ? -0.5 : 0))*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.1),
                         robot.lift.liftAdjustAction(-400),
@@ -89,16 +93,20 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner humanPlayerDrop() {
         builder = builder
-                .afterTime(1, new SequentialAction(robot.robotAction(Robot.RobotStates.SPECIMEN), new SleepAction(0.25), robot.claw.clawAction(Claw.ClawStates.OPEN)))
+                .afterTime(1, new SequentialAction(robot.robotAction(Robot.RobotStates.INTAKE), new SleepAction(0.25), robot.claw.clawAction(Claw.ClawStates.OPEN)))
                 .strafeToLinearHeading(new Vector2d(54, 46*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
                 .stopAndAdd(robot.claw.clawAction(Claw.ClawStates.OPEN))
-                .strafeToLinearHeading(new Vector2d(54, 40*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
-                .stopAndAdd(new SleepAction(1.25))
+                .strafeToLinearHeading(new Vector2d(54, 39*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
+                .stopAndAdd(new SequentialAction(robot.robotAction(Robot.RobotStates.SPECIMEN), robot.claw.clawAction(Claw.ClawStates.OPEN),new SleepAction(1.25)))
                 .strafeToLinearHeading(new Vector2d(54, 54*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
                 .stopAndAdd(new SequentialAction(robot.claw.clawAction(Claw.ClawStates.CLOSE), new SleepAction(0.5), robot.robotAction(Robot.RobotStates.DEFAULT)));
 
         return this;
     }
+
+//    public FieldTrajectoryPlanner humanPlayerPick() {
+//
+//    }
     public FieldTrajectoryPlanner dropNet() {
         builder = builder.stopAndAdd(
                         new SequentialAction(
@@ -127,12 +135,15 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner park() {
         builder = builder
-                .stopAndAdd(new SequentialAction(
+                .afterTime(0.1, new SequentialAction(
                         robot.arm.armAction(Arm.ArmStates.STORED),
                         new SleepAction(0.5),
-                        robot.robotAction(Robot.RobotStates.DEFAULT),
-                        new SleepAction(2)
-                ));
+                        robot.robotAction(Robot.RobotStates.HANG),
+                        robot.hang.hangAction(1)
+                ))
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(-23, -11, Math.toRadians(0)), Math.toRadians(0), new TranslationalVelConstraint(100), new ProfileAccelConstraint(-20, 20))
+                ;
 //                .strafeToLinearHeading(new Vector2d(36*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0))
 //                .strafeToLinearHeading(new Vector2d(23*robot.autoPos.yMult, 10*robot.autoPos.yMult),  Math.toRadians(robot.autoPos.yMult > 0 ? 180 : 0));
         return this;

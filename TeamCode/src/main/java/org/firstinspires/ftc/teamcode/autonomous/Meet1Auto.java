@@ -28,7 +28,7 @@ public class Meet1Auto extends LinearOpMode {
             telemetry.addData("starting pos", autoPos);
             telemetry.update();
         }
-        Robot robot = new Robot(hardwareMap, telemetry, autoPos );
+        Robot robot = new Robot(hardwareMap, telemetry, autoPos, false);
 
         Action autoAction = robot.createTrajectoryPlanner()
                 .dropSpecimen()

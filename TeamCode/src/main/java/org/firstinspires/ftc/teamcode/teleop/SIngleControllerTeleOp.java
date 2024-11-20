@@ -46,8 +46,8 @@ public class SIngleControllerTeleOp extends LinearOpMode {
 //        Lift lift = new Lift(hardwareMap, telemetry);
          actionRunner = new TeleopActionRunner();
 //        Arm arm = new Arm(hardwareMap, telemetry);
-         robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET);
-        robot.drive.pose = new Pose2d(-23, -10, 0);
+         robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET, true);
+        robot.drive.pose = new Pose2d(-23, -11, 0);
         ToggleButton zoneBased = new ToggleButton(true);
         ToggleButton clawClose = new ToggleButton(false);
         waitForStart();
@@ -55,7 +55,7 @@ public class SIngleControllerTeleOp extends LinearOpMode {
             if (!gamepad1.touchpad) {
                 drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             }
-            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down);
+            robot.lift.manualControl(gamepad1.left_trigger-gamepad1.right_trigger, gamepad2.dpad_up, gamepad2.dpad_down, gamepad1.touchpad);
             if (gamepad1.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
             } else if (gamepad1.dpad_up) {
@@ -76,9 +76,9 @@ public class SIngleControllerTeleOp extends LinearOpMode {
             } else if (gamepad2.x) {
                 robot.wrist.setWristState(Wrist.WristStates.DOWN);
             }
-            if (gamepad1.touchpad && (!actionRunner.isBusy() || gamepad1.y)) {
-                actionRunner.addAction(robot.huskyLens.pickUpAction(robot));
-            }
+//            if (gamepad1.touchpad && (!actionRunner.isBusy() || gamepad1.y)) {
+//                actionRunner.addAction(robot.huskyLens.pickUpAction(robot));
+//            }
 
 //            if (Math.abs(robot.drive.pose.position.x) > 54 && Math.abs(robot.drive.pose.position.y) > 52 && Math.abs((Math.toDegrees(robot.drive.pose.heading.toDouble())%360)-225) < 10 && robot.currentState == Robot.RobotStates.HIGH_BASKET) {
 //                robot.claw.setPosition(Claw.ClawStates.OPEN);

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -17,4 +18,11 @@ public class Hang extends Subsystem{
     public void manualControl(double power) {
         hangServo.setPower(power);
     }
+
+    public Action hangAction(double power) {
+        return telemetryPacket -> {
+        manualControl(power);
+        return false;
+        };
+    };
 }
