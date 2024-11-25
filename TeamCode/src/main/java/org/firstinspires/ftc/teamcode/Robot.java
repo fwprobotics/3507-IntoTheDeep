@@ -54,7 +54,7 @@ public class Robot {
     }
 
     public Lift lift;
-    public Arm arm;
+   // public Arm arm;
     public Wrist wrist;
     public Claw claw;
     public HuskySampleDetect huskyLens;
@@ -68,7 +68,7 @@ public class Robot {
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, AutoPos autoPos) {
         this.lift = new Lift(hardwareMap, telemetry);
-        this.arm = new Arm(hardwareMap, telemetry);
+       // this.arm = new Arm(hardwareMap, telemetry);
         this.wrist = new Wrist(hardwareMap, telemetry);
         this.claw = new Claw(hardwareMap, telemetry);
         this.huskyLens = new HuskySampleDetect(hardwareMap, telemetry);
@@ -83,7 +83,7 @@ public class Robot {
         return new SequentialAction(
                 this.claw.clawAction(Claw.ClawStates.CLOSE),
                 this.lift.liftAction(state.liftState),
-                this.arm.armAction(state.armState),
+          //      this.arm.armAction(state.armState),
                 this.wrist.wristAction(state.wristState)
         );
     }
@@ -91,7 +91,7 @@ public class Robot {
     public void setRobotState(RobotStates state) {
         currentState = state;
        claw.setPosition(Claw.ClawStates.CLOSE);
-       arm.setState(state.armState);
+    //   arm.setState(state.armState);
        wrist.setWristState(state.wristState);
        lift.setState(state.liftState);
     }

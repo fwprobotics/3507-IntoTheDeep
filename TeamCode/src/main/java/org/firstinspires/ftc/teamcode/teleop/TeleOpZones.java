@@ -55,7 +55,7 @@ public class TeleOpZones extends LinearOpMode {
             if (!gamepad1.touchpad) {
                 drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             }
-            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down);
+            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.right_stick_y);
             if (gamepad2.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
             } else if (gamepad2.dpad_up) {

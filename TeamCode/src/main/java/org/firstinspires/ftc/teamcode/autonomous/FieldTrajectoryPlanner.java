@@ -27,7 +27,7 @@ public class FieldTrajectoryPlanner {
                 .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 41.5*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.5),
-                        robot.lift.liftAdjustAction(-400),
+                        robot.lift.liftAdjustAction(-400, 0),
                         new SleepAction(.5),
                         robot.claw.clawAction(Claw.ClawStates.OPEN),
                         new SleepAction(0.5)
@@ -74,7 +74,7 @@ public class FieldTrajectoryPlanner {
     public FieldTrajectoryPlanner park() {
         builder = builder
                 .stopAndAdd(new SequentialAction(
-                        robot.arm.armAction(Arm.ArmStates.STORED),
+                   //     robot.arm.armAction(Arm.ArmStates.STORED),
                         new SleepAction(0.5),
                         robot.robotAction(Robot.RobotStates.DEFAULT),
                         new SleepAction(2)
