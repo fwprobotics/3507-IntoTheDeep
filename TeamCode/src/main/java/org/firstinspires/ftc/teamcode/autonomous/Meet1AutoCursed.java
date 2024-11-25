@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 
 @Autonomous
-public class Meet1Auto extends LinearOpMode {
+public class Meet1AutoCursed extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,17 +27,17 @@ public class Meet1Auto extends LinearOpMode {
             telemetry.addData("starting pos", autoPos);
             telemetry.update();
         }
-        Robot robot = new Robot(hardwareMap, telemetry, autoPos, false);
+        Robot robot = new Robot(hardwareMap, telemetry, autoPos, false );
 
         Action autoAction = robot.createTrajectoryPlanner()
-                .dropSpecimen()
-                .pickNeutral(0)
-                .dropNet()
-                .pickNeutral(1)
-                .dropNet()
-                .pickNeutral(2)
-                .dropNet()
-                .park()
+                .dropSpecimen(0)
+                .pickSpecimen(0)
+                .humanPlayerDrop()
+                .dropSpecimen(1)
+                .pickSpecimen(1)
+                .humanPlayerDrop()
+                .dropSpecimen(2)
+             //  .park()
               //  .ascend()
                 .builder.build();
 
