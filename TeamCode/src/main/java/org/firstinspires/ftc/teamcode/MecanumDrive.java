@@ -63,18 +63,18 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         // drive model parameters
-        public double inPerTick = .0005333 ;
-        public double lateralInPerTick = 0.00037560684238644625;
-        public double trackWidthTicks = 28211.264197402892;
+        public double inPerTick = 0.00202193 ;
+        public double lateralInPerTick = 0.0014604955619367437;
+        public double trackWidthTicks = 6101.86389101906;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.3740912896090665;
-        public double kV = 0.00007905930249231963;
+        public double kS = 1.4376364244022746;
+        public double kV = 0.00025210906029181444;
         public double kA = 0.00001;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 45;
-        public double minProfileAccel = -30;
+        public double maxWheelVel = 100;
+        public double minProfileAccel = -50;
         public double maxProfileAccel = 50;
 
         // turn profile parameters (in radians)
@@ -82,13 +82,13 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 12;
-        public double lateralGain = 10;
-        public double headingGain = 8; // shared with turn
+        public double axialGain = 17;
+        public double lateralGain = 5;
+        public double headingGain = 10; // shared with turn
 
-        public double axialVelGain = 0.0;
-        public double lateralVelGain = 0;
-        public double headingVelGain = 0; // shared with turn
+        public double axialVelGain = 0.5;
+        public double lateralVelGain = 0.5;
+        public double headingVelGain = 0.05; // shared with turn
     }
 
     public static Params PARAMS = new Params();
@@ -318,7 +318,7 @@ public final class MecanumDrive {
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
             Pose2d error = txWorldTarget.value().minusExp(pose);
 
-            if (t >= timeTrajectory.duration && (error.position.norm() < 0.5 && Math.toDegrees(error.heading.toDouble()) < 1) || t >= timeTrajectory.duration + 1) {
+            if (t >= timeTrajectory.duration || t >= timeTrajectory.duration + 1) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);

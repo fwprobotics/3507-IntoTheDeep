@@ -31,6 +31,8 @@ public class TeleOp extends LinearOpMode {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
             } else if (gamepad2.dpad_left) {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKE));
+            } else if (gamepad2.dpad_right) {
+                actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
             }
 
             if (gamepad2.a) {
@@ -40,9 +42,18 @@ public class TeleOp extends LinearOpMode {
             }
 
             if (gamepad2.y) {
-                robot.wrist.setWristState(Wrist.WristStates.OUT);
+                robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
             } else if (gamepad2.x) {
+                robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+            }
+
+            if (gamepad2.left_bumper) {
+                robot.wrist.setWristState(Wrist.WristStates.OUT);
+            } else if (gamepad2.right_bumper) {
                 robot.wrist.setWristState(Wrist.WristStates.DOWN);
+            } else if (gamepad2.right_stick_button) {
+                robot.wrist.setWristState(Wrist.WristStates.OUTBACK);
+
             }
 
             actionRunner.update();

@@ -13,7 +13,8 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setDimensions(16, 16)
+                .setConstraints(100, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
 
@@ -25,16 +26,40 @@ public class MeepMeepTesting {
 //
 //              //  .splineToLinearHeading(new Pose2d(-54, -52, Math.toRadians(180)), Math.toRadians(225))
 //                .build());
-        Robot robot = new Robot(myBot, Robot.AutoPos.REDNET);
+        Robot robot = new Robot(myBot, Robot.AutoPos.REDHUMAN);
+//        myBot.runAction(robot.createTrajectoryPlanner()
+//                        .dropSpecimen()
+//                        .pickNeutral(0)
+//                        .dropNet()
+//                .pickNeutral(1)
+//                .dropNet()
+//                .pickNeutral(2)
+//                .dropNet()
+//                .pickSpecimen(0)
+//                .dropNet()
+//                        .ascend()
+//                .builder.build());
+
         myBot.runAction(robot.createTrajectoryPlanner()
                         .dropSpecimen()
-                        .pickNeutral(0)
-                        .dropNet()
-                .pickNeutral(1)
-                .dropNet()
-                .pickNeutral(2)
-                .dropNet()
-                        .ascend()
+                .dragSpecimen(0)
+              //  .humanPlayerDrop()
+                .dragSpecimen(1)
+               // .humanPlayerDrop()
+                .dragSpecimen(2)
+                //.humanPlayerDrop()
+                        .humanPlayerPickup()
+                                .dropSpecimen(0)
+                .humanPlayerPickup()
+                .dropSpecimen(1)
+                .humanPlayerPickup()
+                .dropSpecimen(2)
+                .humanPlayerPickup()
+                .dropSpecimen(3)
+                                .park()
+
+
+            //    .ascend()
                 .builder.build());
 
         myBot.export("fullMeet1Auto");

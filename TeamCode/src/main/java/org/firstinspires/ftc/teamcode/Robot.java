@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -33,12 +35,12 @@ public class Robot {
 
     public enum RobotStates {
         DEFAULT (Lift.LiftStates.FLOOR, Arm.ArmStates.STORED, Wrist.WristStates.OUT),
-        INTAKE (Lift.LiftStates.FLOOR, Arm.ArmStates.INTAKE, Wrist.WristStates.DOWN),
+        INTAKE (Lift.LiftStates.INTAKE, Arm.ArmStates.INTAKE, Wrist.WristStates.DOWN),
         SPECIMEN (Lift.LiftStates.SPECIMEN, Arm.ArmStates.OUT, Wrist.WristStates.OUT),
-        LOW_CHAMBER (Lift.LiftStates.LOW_CHAMBER, Arm.ArmStates.OUT, Wrist.WristStates.OUT),
+        LOW_CHAMBER (Lift.LiftStates.LOW_CHAMBER, Arm.ArmStates.OUT, Wrist.WristStates.OUTBACK),
         HIGH_CHAMBER (Lift.LiftStates.LOW_BASKET, Arm.ArmStates.OUT, Wrist.WristStates.OUT),
     //    LOW_BASKET,
-        HIGH_BASKET (Lift.LiftStates.HIGH_BASKET, Arm.ArmStates.OUT, Wrist.WristStates.OUT),
+        HIGH_BASKET (Lift.LiftStates.HIGH_BASKET, Arm.ArmStates.OUT, Wrist.WristStates.OUTBACK),
         HANG (Lift.LiftStates.HANG, Arm.ArmStates.STORED, Wrist.WristStates.OUT);
 
         Lift.LiftStates liftState;
@@ -72,7 +74,7 @@ public class Robot {
         this.wrist = new Wrist(hardwareMap, telemetry);
         this.claw = new Claw(hardwareMap, telemetry);
         this.huskyLens = new HuskySampleDetect(hardwareMap, telemetry);
-        this.startingPos = new Pose2d(10*autoPos.xMult, 63* autoPos.yMult, Math.toRadians(-90* autoPos.yMult));
+        this.startingPos = new Pose2d(8*autoPos.xMult, 63* autoPos.yMult, Math.toRadians(-90* autoPos.yMult));
         this.drive = new MecanumDrive(hardwareMap, startingPos);
         this.autoPos = autoPos;
 
@@ -81,9 +83,20 @@ public class Robot {
     public Action robotAction(RobotStates state) {
         currentState = state;
         return new SequentialAction(
-                this.claw.clawAction(Claw.ClawStates.CLOSE),
-                this.lift.liftAction(state.liftState),
+                state == RobotStates.INTAKE ? new SequentialAction(this.wrist.wristAction(Wrist.WristStates.OUT)) : new InstantAction(() -> {}),
+
+        this.lift.liftAction(state.liftState),
           //      this.arm.armAction(state.armState),
+                this.wrist.wristAction(state.wristState)
+        );
+    }
+    public Action robotAction(RobotStates state, boolean down) {
+        currentState = state;
+        return new SequentialAction(
+                state == RobotStates.INTAKE ? new SequentialAction(this.wrist.wristAction(Wrist.WristStates.OUT)) : new InstantAction(() -> {}),
+
+                this.lift.liftAction(state.liftState, down),
+                //      this.arm.armAction(state.armState),
                 this.wrist.wristAction(state.wristState)
         );
     }

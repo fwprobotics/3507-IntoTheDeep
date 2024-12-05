@@ -3,6 +3,7 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
@@ -19,8 +20,16 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner dropSpecimen() {
         builder = builder.strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 40*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
-                .stopAndAdd(new SleepAction(2))
+                .stopAndAdd(new SleepAction(0.5))
                 .strafeToLinearHeading(new Vector2d(5*robot.autoPos.xMult, 44*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
+
+        return this;
+    }
+
+    public FieldTrajectoryPlanner dropSpecimen(int number) {
+        builder = builder.strafeToLinearHeading(new Vector2d((5+(number))*robot.autoPos.xMult, 40*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult))
+                .stopAndAdd(new SleepAction(0.5))
+                .strafeToLinearHeading(new Vector2d((5+(number))*robot.autoPos.xMult, 44*robot.autoPos.yMult), Math.toRadians(-90*robot.autoPos.yMult));
 
         return this;
     }
@@ -28,6 +37,53 @@ public class FieldTrajectoryPlanner {
     public FieldTrajectoryPlanner pickNeutral(int number) {
         builder = builder.strafeToLinearHeading(new Vector2d((48+(9.6*number)+(number < 2 ? 0: -9.6))*robot.autoPos.yMult, (44.5+(number < 2 ? 0 : -4.5))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-125*robot.autoPos.yMult) );
         builder = builder.stopAndAdd(new SleepAction(3.25));
+        return this;
+    }
+    public FieldTrajectoryPlanner pickSpecimen(int number) {
+        if (number == 0) {
+              builder = builder.splineToConstantHeading(new Vector2d(-(35+(number*9.6))*robot.autoPos.yMult, (45)*robot.autoPos.yMult), Math.toRadians(90))
+            .splineToConstantHeading(new Vector2d(-(35+(number*9.6))*robot.autoPos.yMult, (16)*robot.autoPos.yMult), Math.toRadians(90));
+
+        }
+        builder = builder
+//                .afterTime(1, new SequentialAction(robot.lift.liftAction(Lift.LiftStates.FLOOR), new SleepAction(0.25), robot.robotAction(Robot.RobotStates.INTAKE),  new SleepAction(0.1),
+//                        robot.claw.clawAction(Claw.ClawStates.OPEN)))
+            //    .strafeToLinearHeading(new Vector2d(-(40)*robot.autoPos.yMult, (41+(number < 2 ? 0 : -4.5))*robot.autoPos.yMult), Math.toRadians(45-(15*number)))
+                 .splineToConstantHeading(new Vector2d(-(43+(number*9.6))*robot.autoPos.yMult, (16)*robot.autoPos.yMult), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(40+(number*9.6), 50*robot.autoPos.yMult), Math.toRadians(-90))
+
+                .stopAndAdd(new SequentialAction(
+
+                        new SleepAction(.25+(number < 1 ? 0 : 0.25)),
+//                      //  robot.claw.clawAction(Claw.ClawStates.CLOSE),
+//                        //  robot.huskyLens.pickUpAction(robot),
+                        new SleepAction(.1)
+                        //  robot.arm.armAction(Arm.ArmStates.STORED)
+                ));
+        return this;
+    }
+
+    public FieldTrajectoryPlanner dragSpecimen(int number) {
+        if (number == 0) {
+            builder = builder.splineToConstantHeading(new Vector2d(-(35+(number*9.6))*robot.autoPos.yMult, (45)*robot.autoPos.yMult), Math.toRadians(90))
+                    .splineToConstantHeading(new Vector2d(-(35+(number*9.6))*robot.autoPos.yMult, (16)*robot.autoPos.yMult), Math.toRadians(90));
+
+        }
+        builder = builder
+//                .afterTime(1, new SequentialAction(robot.lift.liftAction(Lift.LiftStates.FLOOR), new SleepAction(0.25), robot.robotAction(Robot.RobotStates.INTAKE),  new SleepAction(0.1),
+//                        robot.claw.clawAction(Claw.ClawStates.OPEN)))
+                //    .strafeToLinearHeading(new Vector2d(-(40)*robot.autoPos.yMult, (41+(number < 2 ? 0 : -4.5))*robot.autoPos.yMult), Math.toRadians(45-(15*number)))
+                .splineToConstantHeading(new Vector2d(-(43+(number*9.6))*robot.autoPos.yMult, (16)*robot.autoPos.yMult), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(40+(number*9.6), 50*robot.autoPos.yMult), Math.toRadians(-90))
+
+                .stopAndAdd(new SequentialAction(
+
+                 //       new SleepAction(.25+(number < 1 ? 0 : 0.25)),
+//                      //  robot.claw.clawAction(Claw.ClawStates.CLOSE),
+//                        //  robot.huskyLens.pickUpAction(robot),
+                   //     new SleepAction(.1)
+                        //  robot.arm.armAction(Arm.ArmStates.STORED)
+                ));
         return this;
     }
 
@@ -42,6 +98,32 @@ public class FieldTrajectoryPlanner {
                 .splineToLinearHeading(new Pose2d(-23, -11, Math.toRadians(0)), Math.toRadians(0), new TranslationalVelConstraint(100), new ProfileAccelConstraint(-20, 20))
         ;
         return this;
+    }
+
+    public FieldTrajectoryPlanner park() {
+        builder = builder
+                .strafeTo(new Vector2d(36, -60), new TranslationalVelConstraint(100), new ProfileAccelConstraint(-20, 20))
+        ;
+        return this;
+    }
+
+    public FieldTrajectoryPlanner humanPlayerDrop() {
+        builder = builder
+            //    .afterTime(1, new SequentialAction(robot.robotAction(Robot.RobotStates.INTAKE), new SleepAction(0.25), robot.claw.clawAction(Claw.ClawStates.OPEN)))
+                .strafeToLinearHeading(new Vector2d(40, 42*robot.autoPos.yMult), Math.toRadians(-40))
+                .stopAndAdd(new SleepAction(1));
+//                .strafeToLinearHeading(new Vector2d(54, 39*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
+//              //  .stopAndAdd(new SequentialAction(robot.robotAction(Robot.RobotStates.SPECIMEN), robot.claw.clawAction(Claw.ClawStates.OPEN),new SleepAction(1.25)))
+//                .strafeToLinearHeading(new Vector2d(54, 54*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
+               // .stopAndAdd(new SequentialAction(robot.claw.clawAction(Claw.ClawStates.CLOSE), new SleepAction(0.5), robot.robotAction(Robot.RobotStates.DEFAULT)));
+
+        return this;
+    }
+
+    public FieldTrajectoryPlanner humanPlayerPickup() {
+         builder = builder.strafeToLinearHeading(new Vector2d(36, 54*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
+                 .stopAndAdd(new SleepAction(0.2));
+         return this;
     }
 
     public FieldTrajectoryPlanner findCoord(Pose2d pose2d) {

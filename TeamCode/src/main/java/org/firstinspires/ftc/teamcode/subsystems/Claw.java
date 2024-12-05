@@ -14,8 +14,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Claw extends Subsystem{
 
     public enum ClawStates {
-        OPEN (0.5, 0),
-        CLOSE (0.0, 0.5);
+        CLOSE (0.5, 0),
+        OPEN (0.0, 0.5);
 
         public double rightSetPos;
         public double leftSetPos;
