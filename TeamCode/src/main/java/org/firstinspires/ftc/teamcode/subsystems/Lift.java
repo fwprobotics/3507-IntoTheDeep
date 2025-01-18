@@ -18,7 +18,7 @@ public class Lift extends Subsystem {
     @Config
     public static class LiftConfig {
         public static double liftPower = 1;
-        public static double liftStep = 20;
+        public static double liftStep = 30;
     }
 
     public enum LiftStates {

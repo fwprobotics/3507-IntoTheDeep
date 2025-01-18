@@ -67,6 +67,8 @@ public class TeleOpZones extends LinearOpMode {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
             } else if (gamepad2.dpad_left) {
                 actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKE));
+            }  else if (gamepad2.dpad_right) {
+                actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
             }
             clawClose.toggle(gamepad2.a);
             if (clawClose.newPress) {
