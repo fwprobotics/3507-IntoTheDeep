@@ -9,9 +9,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Wrist extends Subsystem{
 
     public enum WristStates {
-        DOWN(0.35),
+        DOWN(1),
         OUT(0.73),
-        OUTBACK(1);
+        OUTBACK(0.35);
 
 
         public double pos;

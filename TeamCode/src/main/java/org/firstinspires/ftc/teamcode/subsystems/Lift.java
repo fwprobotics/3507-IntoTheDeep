@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -113,7 +114,7 @@ public class Lift extends Subsystem {
 
     public Action liftAction(LiftStates state) {
         if (rotateSetPos > state.rotate) {
-            liftRotate.setPower(0.1);
+            liftRotate.setPower(0.2);
             return new SequentialAction(
                     liftExtendAction(state),
                     new SleepAction(state.delay),
