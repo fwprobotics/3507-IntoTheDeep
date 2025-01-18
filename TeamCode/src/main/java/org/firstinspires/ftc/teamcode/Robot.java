@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -35,12 +33,12 @@ public class Robot {
 
     public enum RobotStates {
         DEFAULT (Lift.LiftStates.FLOOR, Arm.ArmStates.STORED, Wrist.WristStates.OUT),
-        INTAKE (Lift.LiftStates.INTAKE, Arm.ArmStates.INTAKE, Wrist.WristStates.DOWN),
+        INTAKE (Lift.LiftStates.FLOOR, Arm.ArmStates.TRANSFER, Wrist.WristStates.DOWN),
         SPECIMEN (Lift.LiftStates.SPECIMEN, Arm.ArmStates.OUT, Wrist.WristStates.OUT),
-        LOW_CHAMBER (Lift.LiftStates.LOW_CHAMBER, Arm.ArmStates.OUT, Wrist.WristStates.OUTBACK),
+        LOW_CHAMBER (Lift.LiftStates.LOW_CHAMBER, Arm.ArmStates.OUT, Wrist.WristStates.OUT),
         HIGH_CHAMBER (Lift.LiftStates.LOW_BASKET, Arm.ArmStates.OUT, Wrist.WristStates.OUT),
     //    LOW_BASKET,
-        HIGH_BASKET (Lift.LiftStates.HIGH_BASKET, Arm.ArmStates.OUT, Wrist.WristStates.OUTBACK),
+        HIGH_BASKET (Lift.LiftStates.HIGH_BASKET, Arm.ArmStates.OUT, Wrist.WristStates.OUT),
         HANG (Lift.LiftStates.HANG, Arm.ArmStates.STORED, Wrist.WristStates.OUT);
 
         Lift.LiftStates liftState;
@@ -69,7 +67,7 @@ public class Robot {
     public Pose2d startingPos;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, AutoPos autoPos) {
-        this.lift = new Lift(hardwareMap, telemetry);
+        this.lift = new Lift(hardwareMap, telemetry, false);
        // this.arm = new Arm(hardwareMap, telemetry);
         this.wrist = new Wrist(hardwareMap, telemetry);
         this.claw = new Claw(hardwareMap, telemetry);
@@ -95,7 +93,7 @@ public class Robot {
         return new SequentialAction(
                 state == RobotStates.INTAKE ? new SequentialAction(this.wrist.wristAction(Wrist.WristStates.OUT)) : new InstantAction(() -> {}),
 
-                this.lift.liftAction(state.liftState, down),
+                this.lift.liftAction(state.liftState),
                 //      this.arm.armAction(state.armState),
                 this.wrist.wristAction(state.wristState)
         );

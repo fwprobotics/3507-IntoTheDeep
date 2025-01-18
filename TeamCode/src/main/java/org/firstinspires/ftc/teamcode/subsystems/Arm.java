@@ -12,7 +12,7 @@ public class Arm extends Subsystem {
         STORED (0),
         OUT (0.5),
 
-        INTAKE(0.71); //0.65
+        TRANSFER(0.71); //0.65
 
         public double setPos;
 

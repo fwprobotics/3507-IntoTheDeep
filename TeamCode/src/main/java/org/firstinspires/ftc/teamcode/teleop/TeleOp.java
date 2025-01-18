@@ -24,7 +24,7 @@ public class TeleOp extends LinearOpMode {
         waitForStart();
         while (!isStopRequested()) {
             drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
-            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.right_stick_y);
+            robot.lift.manualControl(gamepad2.left_stick_y, false, false, gamepad2.touchpad);
             if (gamepad2.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
             } else if (gamepad2.dpad_up) {
@@ -52,7 +52,7 @@ public class TeleOp extends LinearOpMode {
             } else if (gamepad2.right_bumper) {
                 robot.wrist.setWristState(Wrist.WristStates.DOWN);
             } else if (gamepad2.right_stick_button) {
-                robot.wrist.setWristState(Wrist.WristStates.OUTBACK);
+                robot.wrist.setWristState(Wrist.WristStates.OUT);
 
             }
 

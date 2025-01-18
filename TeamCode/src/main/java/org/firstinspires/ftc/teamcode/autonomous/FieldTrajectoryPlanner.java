@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 
 
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -12,11 +11,7 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
-
-import java.io.SequenceInputStream;
 
 public class FieldTrajectoryPlanner {
 
@@ -108,7 +103,7 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner pickSpecimen(int number) {
         builder = builder
-                .stopAndAdd(new SequentialAction(robot.lift.liftPosAction(400+(200*number), 0)))
+                .stopAndAdd(new SequentialAction(robot.lift.liftAdjustAction(0)))
                 .strafeToLinearHeading(new Vector2d(-(36)*robot.autoPos.yMult, (48+(number < 2 ? 0 : -4.5))*robot.autoPos.yMult), Math.toRadians(45-(10*number)))
                 .stopAndAdd(new SequentialAction(
 
