@@ -1,12 +1,18 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.util.TeleopActionRunner;
 
 public class Claw extends Subsystem{
 
@@ -52,15 +58,63 @@ public class Claw extends Subsystem{
 
     }
 
-    public Action autoClawAction(Robot robot) {
+    public Action autoClawAction(Robot robot, TeleopActionRunner actionRunner) {
         return (telemetryPacket) -> {
             telemetry.addData("CLAW POSS", getPos());
             if (getPos() > 325) {
-                robot.setRobotState(Robot.RobotStates.DEFAULT);
+                actionRunner.addAction(robot.transferAction());
             } else {
                 setPosition(ClawStates.OPEN);
             }
             return false;
+        };
+    }
+
+    public Action autoClawAction(Robot robot) {
+        return new Action() {
+
+            TeleopActionRunner actionRunner;
+            boolean init = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!init) {
+                    actionRunner = new TeleopActionRunner();
+                    if (getPos() > 325) {
+                        actionRunner.addAction(robot.transferAction());
+                    } else {
+                        setPosition(ClawStates.OPEN);
+                        return false;
+                    }
+                    init = true;
+                }
+                actionRunner.update();
+                return actionRunner.isBusy();
+            }
+        };
+        }
+
+    public Action autoClawAction(Robot robot, Gamepad gamepad) {
+        return new Action() {
+
+            TeleopActionRunner actionRunner;
+            boolean init = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!init) {
+                    actionRunner = new TeleopActionRunner();
+                    if (getPos() > 320 || gamepad.dpad_right) {
+                        actionRunner.addAction(new SequentialAction(robot.transferActionTeleOp()));
+                    } else {
+                        setPosition(ClawStates.OPEN);
+                        gamepad.rumbleBlips(1);
+                        return false;
+                    }
+                    init = true;
+                }
+                actionRunner.update();
+                telemetry.addData("claw runner", actionRunner.isBusy());
+                return actionRunner.isBusy();
+            }
         };
     }
 

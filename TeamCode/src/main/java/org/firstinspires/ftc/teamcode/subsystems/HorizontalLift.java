@@ -9,9 +9,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class HorizontalLift extends Subsystem {
 
     public enum HLiftStates {
-        STORED (0, 0.5),
+        STORED (0.55, .1),
         ABIT (0.1, 0.4),
-        MAX (0.5, 0);
+        MAX (0, 0.65);
 
         public double leftPos;
         public double rightPos;
@@ -40,6 +40,15 @@ public class HorizontalLift extends Subsystem {
         };
     }
 
+    public Action hLiftAnalogAction(double pos) {
+        return (telemetryPacket) -> {
+            currentPos = pos;
+            rightHLift.setPosition(currentPos);
+            leftHLift.setPosition(HLiftStates.MAX.rightPos - currentPos);
+            return false;
+        };
+    }
+
     public void setState(HLiftStates state) {
         currentPos = state.leftPos;
         leftHLift.setPosition(state.leftPos);
@@ -47,10 +56,14 @@ public class HorizontalLift extends Subsystem {
     }
 
     public void manualControl(double power) {
-        currentPos = Math.max(Math.min(currentPos += power*0.05, 0), HLiftStates.MAX.leftPos);
-        leftHLift.setPosition(currentPos);
-        rightHLift.setPosition(HLiftStates.MAX.leftPos-currentPos);
+        if (power != 0) {
+            currentPos = Math.min(Math.max(currentPos + Math.pow(power, 3)*0.05, 0), HLiftStates.MAX.rightPos);
+            rightHLift.setPosition(currentPos);
+            leftHLift.setPosition(HLiftStates.MAX.rightPos - currentPos);
+        }
         telemetry.addData("hLift", currentPos);
+        telemetry.addData("input power", power);
+
     }
 
 }

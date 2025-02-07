@@ -9,9 +9,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Wrist extends Subsystem{
 
     public enum WristStates {
-        DOWN(0.35),
-        OUT(0.73),
-        TRANSFER(1);
+        DOWN(0),
+        WALL (0.5),
+        OUT(0.65),
+        TRANSFER(0.9);
 
 
         public double pos;
@@ -20,9 +21,9 @@ public class Wrist extends Subsystem{
         }
     }
     public enum RotateWristStates {
-        LEFT(0),
+        LEFT(0.25),
         MID(0.5),
-        RIGHT(1);
+        RIGHT(0.75);
 
         public double pos;
         RotateWristStates(double pos) {
@@ -34,6 +35,7 @@ public class Wrist extends Subsystem{
     Servo rotateServo;
     double currentPos = 0;
     double rotateCurrentPos = 0;
+    public RotateWristStates rotateWristState = RotateWristStates.MID;
     public Wrist(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap, telemetry);
         wristServo = hardwareMap.servo.get("wristServo");
@@ -46,6 +48,7 @@ public class Wrist extends Subsystem{
     }
 
     public void setRotateState(RotateWristStates state) {
+        rotateWristState = state;
         rotateCurrentPos = state.pos;
         rotateServo.setPosition(state.pos);
     }

@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 
 @Autonomous
 public class Meet1AutoCursed extends LinearOpMode {
@@ -32,7 +35,7 @@ public class Meet1AutoCursed extends LinearOpMode {
                 .dropSpecimen(0)
                 .dragSpecimen(0)
                 .dragSpecimen(1)
-                .dragSpecimen(2)
+          //      .dragSpecimen(2)
                 .humanPlayerPickup()
                 .dropSpecimen(1)
                 .humanPlayerPickup()
@@ -40,18 +43,20 @@ public class Meet1AutoCursed extends LinearOpMode {
                 .humanPlayerPickup()
                 .dropSpecimen(3)
                 .humanPlayerPickup()
-                .dropSpecimen(4)
+            //    .dropSpecimen(4)
              //  .park()
               //  .ascend()
                 .builder.build();
 
         Actions.runBlocking(robot.robotAction(Robot.RobotStates.DEFAULT));
+        robot.wrist.setWristState(Wrist.WristStates.OUT);
+        robot.arm.setState(Arm.ArmStates.TRANSFER);
 
         while (!gamepad1.touchpad) {
             if (gamepad1.y) {
-                robot.claw.setPosition(Claw.ClawStates.OPEN);
+                robot.dropClaw.setPosition(Claw.ClawStates.OPEN);
             } else if (gamepad1.b) {
-                robot.claw.setPosition(Claw.ClawStates.CLOSE);
+                robot.dropClaw.setPosition(Claw.ClawStates.CLOSE);
             }
         }
 

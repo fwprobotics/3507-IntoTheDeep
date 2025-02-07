@@ -19,8 +19,8 @@ public class Lift extends Subsystem {
         SPECIMEN(75),
         LOW_CHAMBER (700),
         HANG(900),
-        LOW_BASKET (1585),
-        HIGH_BASKET (3400);
+        LOW_BASKET (915),
+        HIGH_BASKET (3000);
 
 
         public int setPos;
@@ -37,14 +37,9 @@ public class Lift extends Subsystem {
         super(hardwareMap, telemetry);
         leftLift = hardwareMap.dcMotor.get("leftLiftMotor");
         rightLift = hardwareMap.dcMotor.get("rightLiftMotor");
-        leftLift.setDirection(DcMotorSimple.Direction.REVERSE);
-        if (teleop) {
-            setPosition = 800;
-        } else {
-            leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLift.setTargetPosition(setPosition);
         rightLift.setTargetPosition(setPosition);
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);

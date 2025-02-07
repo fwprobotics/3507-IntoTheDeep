@@ -47,7 +47,7 @@ public class SIngleControllerTeleOp extends LinearOpMode {
          actionRunner = new TeleopActionRunner();
 //        Arm arm = new Arm(hardwareMap, telemetry);
          robot = new Robot(hardwareMap, telemetry, Robot.AutoPos.REDNET);
-        robot.drive.pose = new Pose2d(-23, -10, 0);
+     //   robot.drive.pose = new Pose2d(-23, -10, 0);
         ToggleButton zoneBased = new ToggleButton(true);
         ToggleButton clawClose = new ToggleButton(false);
         waitForStart();
@@ -55,7 +55,7 @@ public class SIngleControllerTeleOp extends LinearOpMode {
             if (!gamepad1.touchpad) {
                 drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             }
-            robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.right_stick_y);
+            robot.lift.manualControl(gamepad2.left_stick_y, false, false, false);
             if (gamepad1.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
             } else if (gamepad1.dpad_up) {
@@ -77,7 +77,7 @@ public class SIngleControllerTeleOp extends LinearOpMode {
                 robot.wrist.setWristState(Wrist.WristStates.DOWN);
             }
             if (gamepad1.touchpad && (!actionRunner.isBusy() || gamepad1.y)) {
-                actionRunner.addAction(robot.huskyLens.pickUpAction(robot));
+              //  actionRunner.addAction(robot.huskyLens.pickUpAction(robot));
             }
 
 //            if (Math.abs(robot.drive.pose.position.x) > 54 && Math.abs(robot.drive.pose.position.y) > 52 && Math.abs((Math.toDegrees(robot.drive.pose.heading.toDouble())%360)-225) < 10 && robot.currentState == Robot.RobotStates.HIGH_BASKET) {
@@ -92,17 +92,17 @@ public class SIngleControllerTeleOp extends LinearOpMode {
             robot.drive.updatePoseEstimate();
 
             if (usedZoneBased) {
-                processZone(robot.drive.pose);
+         //       processZone(robot.drive.pose);
                 gamepad2.setLedColor(255, 0, 0, 10);
             } else {
                 gamepad2.setLedColor(0, 255, 0, 10);
 
             }
             telemetry.addData("zone based?", zoneBased.state);
-            telemetry.addData("x", robot.drive.pose.position.x);
-            telemetry.addData("y", robot.drive.pose.position.y);
-            double norm_ang = Math.toDegrees(robot.drive.pose.heading.toDouble()) < 0 ? 360 + Math.toDegrees(robot.drive.pose.heading.toDouble()): Math.toDegrees(robot.drive.pose.heading.toDouble());
-            telemetry.addData("heading (deg)", norm_ang);
+       //     telemetry.addData("x", robot.drive.pose.position.x);
+        //    telemetry.addData("y", robot.drive.pose.position.y);
+         //   double norm_ang = Math.toDegrees(robot.drive.pose.heading.toDouble()) < 0 ? 360 + Math.toDegrees(robot.drive.pose.heading.toDouble()): Math.toDegrees(robot.drive.pose.heading.toDouble());
+        //    telemetry.addData("heading (deg)", norm_ang);
             telemetry.addData("clawPos", robot.claw.getPos());
             actionRunner.update();
             telemetry.update();

@@ -12,7 +12,7 @@ public class Arm extends Subsystem {
         STORED (0),
         OUT (0.5),
 
-        TRANSFER(0.71); //0.65
+        TRANSFER(1); //0.65
 
         public double setPos;
 
@@ -22,12 +22,14 @@ public class Arm extends Subsystem {
     }
 
     Servo arm;
+    public ArmStates armState;
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap, telemetry);
         arm = hardwareMap.servo.get("armServo");
     }
 
     public void setState(ArmStates state) {
+        armState = state;
         arm.setPosition(state.setPos);
     }
 
