@@ -44,7 +44,7 @@ public class Robot {
         HIGH_CHAMBER (Lift.LiftStates.LOW_BASKET, Arm.ArmStates.OUT),
         //    LOW_BASKET,
         HIGH_BASKET (Lift.LiftStates.HIGH_BASKET, Arm.ArmStates.OUT),
-        HANG (Lift.LiftStates.FLOOR, Arm.ArmStates.STORED);
+        HANG (Lift.LiftStates.FLOOR, Arm.ArmStates.HANG);
 
         Lift.LiftStates liftState;
         Arm.ArmStates armState;
@@ -119,7 +119,7 @@ public class Robot {
                 this.wrist.wristAction(Wrist.WristStates.TRANSFER),
                 this.arm.armAction(Arm.ArmStates.TRANSFER),
                 this.dropClaw.clawAction(Claw.ClawStates.OPEN),
-                new SleepAction(0.5),
+                new SleepAction(0.7),
                 this.dropClaw.clawAction(Claw.ClawStates.CLOSE),
                 new SleepAction(0.1),
                 this.claw.clawAction(Claw.ClawStates.OPEN),

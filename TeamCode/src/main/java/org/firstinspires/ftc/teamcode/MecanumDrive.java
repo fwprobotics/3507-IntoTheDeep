@@ -303,8 +303,8 @@ public final class MecanumDrive {
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
             Pose2d error = txWorldTarget.value().minusExp(localizer.getPose());
 
-            if ((t >= timeTrajectory.duration && error.position.norm() < 2
-                    && robotVelRobot.linearVel.norm() < 0.5 && Math.toDegrees(error.heading.toDouble()) < 5)
+            if ((t >= timeTrajectory.duration && error.position.norm() < 0.5
+                    && robotVelRobot.linearVel.norm() < 0.5 && Math.toDegrees(error.heading.toDouble()) < 3)
                     || t >= timeTrajectory.duration + 1) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);

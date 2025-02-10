@@ -35,8 +35,8 @@ public class FieldTrajectoryPlanner {
                 .stopAndAdd(new SequentialAction(
                         robot.arm.armAction(Arm.ArmStates.OUT),
                         new SleepAction(0.1),
-                        //  robot.lift.liftAdjustAction(-600),
-                        //    new SleepAction(0.5),
+//                        robot.lift.liftAdjustAction(-600, 0.5),
+//                           new SleepAction(0.5),
                         robot.dropClaw.clawAction(Claw.ClawStates.OPEN))
                 )
 
@@ -69,11 +69,12 @@ public class FieldTrajectoryPlanner {
                 .afterTime(0.75, new SequentialAction(
                         new SleepAction(0.2),
                         robot.robotAction(Robot.RobotStates.DEFAULT),
-                        robot.lowerRobotAction(Robot.LowerRobotStates.INTAKE, 0.41-(number > 1 ? 0.09 : 0)),
+                        robot.lowerRobotAction(Robot.LowerRobotStates.INTAKE, 0.41+(number == 2 ? 0.05: 0)),
                         number == 2 ?robot.wrist.rotateWristState(Wrist.RotateWristStates.RIGHT) : new InstantAction(()-> {}),
                         new SleepAction(0.2),
+                        robot.dropClaw.clawAction(Claw.ClawStates.OPEN),
                         robot.claw.clawAction(Claw.ClawStates.OPEN)))
-                .strafeToLinearHeading(new Vector2d((48.5+(9.3*number)+(number < 2 ? 0: -10))*robot.autoPos.yMult, (50+(number < 2 ? 0 : -4.5))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-117*robot.autoPos.yMult) )
+                .strafeToLinearHeading(new Vector2d((48.25+(9.5*number)+(number < 2 ? 0: -16))*robot.autoPos.yMult, (50+(number < 2 ? 0 : -3.5))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-130*robot.autoPos.yMult) )
                 .stopAndAdd(new SequentialAction(
 
                         new SleepAction(.2+(number < 1 ? 0 : 0.2)), //.5, .3
@@ -152,12 +153,26 @@ public class FieldTrajectoryPlanner {
 //    public FieldTrajectoryPlanner humanPlayerPick() {
 //
 //    }
+
+    public FieldTrajectoryPlanner dropNetStart() {
+        builder = builder.stopAndAdd(
+                        new SequentialAction(
+                                robot.lift.liftAction(Lift.LiftStates.HIGH_BASKET)))
+                .strafeToLinearHeading(new Vector2d(57*robot.autoPos.yMult, 58*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 45))
+                .stopAndAdd(new SequentialAction(
+                        robot.arm.armAction(Arm.ArmStates.OUT),
+                        new SleepAction(0.75),
+                        robot.dropClaw.clawAction(Claw.ClawStates.OPEN)
+                        //    robot.arm.armAction(Arm.ArmStates.STORED)
+                ));
+        return this;
+    }
     public FieldTrajectoryPlanner dropNet() {
         builder = builder.stopAndAdd(
                         new SequentialAction(
                         robot.lift.liftAction(Lift.LiftStates.HIGH_BASKET),
                         new SleepAction(1.25)))
-                .strafeToLinearHeading(new Vector2d(58*robot.autoPos.yMult, 58*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 45))
+                .strafeToLinearHeading(new Vector2d(57*robot.autoPos.yMult, 58*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 45))
                 .stopAndAdd(new SequentialAction(
                         robot.arm.armAction(Arm.ArmStates.OUT),
                         new SleepAction(0.75),

@@ -10,6 +10,7 @@ public class Arm extends Subsystem {
 
     public enum ArmStates {
         STORED (0),
+        HANG(0.2),
         OUT (0.5),
 
         TRANSFER(1); //0.65

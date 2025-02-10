@@ -21,9 +21,9 @@ public class Wrist extends Subsystem{
         }
     }
     public enum RotateWristStates {
-        LEFT(0.25),
+        LEFT(0.1),
         MID(0.5),
-        RIGHT(0.75);
+        RIGHT(0.9);
 
         public double pos;
         RotateWristStates(double pos) {

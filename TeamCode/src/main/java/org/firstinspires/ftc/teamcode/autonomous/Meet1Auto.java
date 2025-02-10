@@ -38,7 +38,7 @@ public class Meet1Auto extends LinearOpMode {
                 //  .ascend()
                 .builder.build();
         Action autoActionSamp = robot.createTrajectoryPlanner()
-                .dropNet()
+                .dropNetStart()
                 .pickNeutral(0)
                 .dropNet()
                 .pickNeutral(1)
