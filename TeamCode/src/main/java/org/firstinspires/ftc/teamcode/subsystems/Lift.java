@@ -19,8 +19,8 @@ public class Lift extends Subsystem {
         SPECIMEN(75),
         LOW_CHAMBER (700),
         HANG(900),
-        LOW_BASKET (920),
-        HIGH_BASKET (3000);
+        LOW_BASKET (1100),
+        HIGH_BASKET (2800);
 
 
         public int setPos;

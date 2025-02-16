@@ -9,11 +9,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Arm extends Subsystem {
 
     public enum ArmStates {
-        STORED (0),
-        HANG(0.2),
-        OUT (0.5),
+        STORED (0.05),
+        HANG(0.7),
+        SAMPLE (0.85),
+        OUT (0.9),
 
-        TRANSFER(1); //0.65
+        TRANSFER(0); //0.65
 
         public double setPos;
 

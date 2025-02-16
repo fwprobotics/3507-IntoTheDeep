@@ -2,11 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -17,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Hang;
 import org.firstinspires.ftc.teamcode.subsystems.HorizontalLift;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 
 public class Robot {
@@ -43,7 +48,7 @@ public class Robot {
         LOW_CHAMBER (Lift.LiftStates.LOW_CHAMBER, Arm.ArmStates.OUT),
         HIGH_CHAMBER (Lift.LiftStates.LOW_BASKET, Arm.ArmStates.OUT),
         //    LOW_BASKET,
-        HIGH_BASKET (Lift.LiftStates.HIGH_BASKET, Arm.ArmStates.OUT),
+        HIGH_BASKET (Lift.LiftStates.HIGH_BASKET, Arm.ArmStates.SAMPLE),
         HANG (Lift.LiftStates.FLOOR, Arm.ArmStates.HANG);
 
         Lift.LiftStates liftState;
@@ -78,6 +83,8 @@ public class Robot {
     public Wrist wrist;
     public Claw claw;
     public Claw dropClaw;
+    public Limelight limelight;
+
     public MecanumDrive drive;
 
     public AutoPos autoPos;
@@ -95,6 +102,7 @@ public class Robot {
         this.arm = new Arm(hardwareMap, telemetry);
         this.hLift = new HorizontalLift(hardwareMap, telemetry);
       //  this.huskyLens = new HuskySampleDetect(hardwareMap, telemetry);
+        this.limelight = new Limelight(hardwareMap, telemetry);
         this.startingPos = new Pose2d(8*autoPos.xMult, 63* autoPos.yMult, Math.toRadians(90* autoPos.yMult));
         this.drive = new MecanumDrive(hardwareMap, startingPos);
         this.autoPos = autoPos;
@@ -132,6 +140,7 @@ public class Robot {
 
     public Action transferActionTeleOp() {
         return new SequentialAction(
+                this.lift.liftAction(Lift.LiftStates.FLOOR),
                 this.hLift.hLiftAction(HorizontalLift.HLiftStates.STORED),
                 this.wrist.rotateWristState(Wrist.RotateWristStates.MID),
                 this.wrist.wristAction(Wrist.WristStates.TRANSFER),
@@ -166,6 +175,29 @@ public class Robot {
                 wrist.wristAction(lowerRobotState.wristState),
                 wrist.rotateWristState(lowerRobotState.rotateWristState)
         );
+    }
+
+    public Action autoRotateAction(Gamepad operatorControls) {
+        return telemetryPacket -> {
+            wrist.setRotateState(limelight.getWristRotateState());
+            return !operatorControls.a && !operatorControls.x && !operatorControls.y && !operatorControls.right_bumper;
+        };
+    }
+
+    public  Action autoPickUpAction() {
+        return telemetryPacket -> {
+            double translationalValue = limelight.getTranslationalValue();
+            if (translationalValue < 5 && wrist.rotateWristState == limelight.getWristRotateState()) {
+                claw.setPosition(Claw.ClawStates.CLOSE);
+                return false;
+            } else if (translationalValue < 5) {
+                hLift.manualControl(0);
+                wrist.setRotateState(limelight.getWristRotateState());
+            } else {
+                hLift.manualControl(translationalValue/100);
+            }
+            return true;
+        };
     }
 
     public void setRobotState(RobotStates state) {

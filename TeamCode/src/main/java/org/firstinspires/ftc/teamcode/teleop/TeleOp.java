@@ -36,9 +36,10 @@ public class TeleOp extends LinearOpMode {
             drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             robot.lift.manualControl(gamepad2.left_stick_y, gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.touchpad);
             robot.hLift.manualControl(gamepad1.right_trigger-gamepad1.left_trigger);
+            specimenState.toggle(gamepad2.touchpad);
             if (gamepad2.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
-            } else if (gamepad2.dpad_up) {
+            } else if (gamepad2.dpad_up && !actionRunner.isBusy()) {
                 //reserved for side pickup
                 if (!specimenState.state) {
                     actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
@@ -53,33 +54,40 @@ public class TeleOp extends LinearOpMode {
                 //override the automated transfer
              //   actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
             }
-            specimenState.toggle(gamepad2.touchpad);
-            if (gamepad2.right_bumper) {
-                actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
-            } else if (gamepad2.left_bumper) {
-                if (!specimenState.state) {
-                    actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
-                } else {
-                    actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
-                }
-            }
+
+//            if (gamepad2.right_bumper) {
+//                actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
+//            } else if (gamepad2.left_bumper) {
+//                if (!specimenState.state) {
+//                    actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
+//                } else {
+//                    actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
+//                }
+//            }
 
 //            if (gamepad2.a) {
 //                robot.claw.setPosition(Claw.ClawStates.CLOSE);
 //            } else if (gamepad2.b) {
 //                robot.dropClaw.setPosition(Claw.ClawStates.OPEN);
 //            }
-            wristRotateToggle.toggle(gamepad2.x);
-            if (gamepad2.y) {
+//            wristRotateToggle.toggle(gamepad2.x);
+//            if (gamepad2.y) {
+//                robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
+//            } else if (wristRotateToggle.newPress) {
+//                if (robot.wrist.rotateWristState == Wrist.RotateWristStates.MID) {
+//                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+//                } else if (robot.wrist.rotateWristState == Wrist.RotateWristStates.LEFT) {
+//                    robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
+//                } else {
+//                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+//                }
+//            }
+            if (gamepad2.x) {
+                robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+            } else if (gamepad2.y) {
+                robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
+            } else if (gamepad2.right_bumper) {
                 robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
-            } else if (wristRotateToggle.newPress) {
-                if (robot.wrist.rotateWristState == Wrist.RotateWristStates.MID) {
-                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
-                } else if (robot.wrist.rotateWristState == Wrist.RotateWristStates.LEFT) {
-                    robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
-                } else {
-                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
-                }
             }
             clawClose.toggle(gamepad2.a);
             if (clawClose.newPress) {

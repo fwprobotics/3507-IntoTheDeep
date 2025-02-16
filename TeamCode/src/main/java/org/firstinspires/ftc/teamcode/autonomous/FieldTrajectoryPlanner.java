@@ -30,13 +30,13 @@ public class FieldTrajectoryPlanner {
         builder = builder.stopAndAdd(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER))
             //    .strafeToLinearHeading(new Vector2d((9)*robot.autoPos.xMult, (40)*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
 
-                .strafeToLinearHeading(new Vector2d((9)*robot.autoPos.xMult, (35.5)*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
+                .strafeToLinearHeading(new Vector2d((9)*robot.autoPos.xMult, (33.5)*robot.autoPos.yMult), Math.toRadians(90*robot.autoPos.yMult))
 
                 .stopAndAdd(new SequentialAction(
-                        robot.arm.armAction(Arm.ArmStates.OUT),
-                        new SleepAction(0.1),
-//                        robot.lift.liftAdjustAction(-600, 0.5),
-//                           new SleepAction(0.5),
+//                        robot.arm.armAction(Arm.ArmStates.OUT),
+//                        new SleepAction(0.1),
+                        robot.lift.liftAdjustAction(600),
+                        new SleepAction(0.5),
                         robot.dropClaw.clawAction(Claw.ClawStates.OPEN))
                 )
 
@@ -66,7 +66,7 @@ public class FieldTrajectoryPlanner {
 
     public FieldTrajectoryPlanner pickNeutral(int number) {
         builder = builder
-                .afterTime(0.75, new SequentialAction(
+                .afterTime(0.75+(number == 0 ? 0.2 : 0), new SequentialAction(
                         new SleepAction(0.2),
                         robot.robotAction(Robot.RobotStates.DEFAULT),
                         robot.lowerRobotAction(Robot.LowerRobotStates.INTAKE, 0.41+(number == 2 ? 0.05: 0)),
@@ -74,7 +74,7 @@ public class FieldTrajectoryPlanner {
                         new SleepAction(0.2),
                         robot.dropClaw.clawAction(Claw.ClawStates.OPEN),
                         robot.claw.clawAction(Claw.ClawStates.OPEN)))
-                .strafeToLinearHeading(new Vector2d((48.25+(9.5*number)+(number < 2 ? 0: -16))*robot.autoPos.yMult, (50+(number < 2 ? 0 : -3.5))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-130*robot.autoPos.yMult) )
+                .strafeToLinearHeading(new Vector2d((48.25+(9.7*number)+(number < 2 ? 0: -16))*robot.autoPos.yMult, (50+(number < 2 ? 0 : -3.5))*robot.autoPos.yMult), number < 2 ? Math.toRadians(-90*robot.autoPos.yMult):Math.toRadians(-130*robot.autoPos.yMult) )
                 .stopAndAdd(new SequentialAction(
 
                         new SleepAction(.2+(number < 1 ? 0 : 0.2)), //.5, .3
@@ -157,11 +157,11 @@ public class FieldTrajectoryPlanner {
     public FieldTrajectoryPlanner dropNetStart() {
         builder = builder.stopAndAdd(
                         new SequentialAction(
-                                robot.lift.liftAction(Lift.LiftStates.HIGH_BASKET)))
-                .strafeToLinearHeading(new Vector2d(57*robot.autoPos.yMult, 58*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 45))
+                                robot.robotAction(Robot.RobotStates.HIGH_BASKET)))
+                .strafeToLinearHeading(new Vector2d(56*robot.autoPos.yMult, 57*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 45))
                 .stopAndAdd(new SequentialAction(
                         robot.arm.armAction(Arm.ArmStates.OUT),
-                        new SleepAction(0.75),
+                        new SleepAction(0.5),
                         robot.dropClaw.clawAction(Claw.ClawStates.OPEN)
                         //    robot.arm.armAction(Arm.ArmStates.STORED)
                 ));
@@ -170,12 +170,12 @@ public class FieldTrajectoryPlanner {
     public FieldTrajectoryPlanner dropNet() {
         builder = builder.stopAndAdd(
                         new SequentialAction(
-                        robot.lift.liftAction(Lift.LiftStates.HIGH_BASKET),
-                        new SleepAction(1.25)))
+                        robot.lift.liftAction(Lift.LiftStates.HIGH_BASKET))) //1.25
+                .afterTime(1.4, robot.arm.armAction(Arm.ArmStates.SAMPLE))
                 .strafeToLinearHeading(new Vector2d(57*robot.autoPos.yMult, 58*robot.autoPos.yMult), Math.toRadians(robot.autoPos.yMult > 0 ? 45 : 45))
                 .stopAndAdd(new SequentialAction(
-                        robot.arm.armAction(Arm.ArmStates.OUT),
-                        new SleepAction(0.75),
+                      //  robot.arm.armAction(Arm.ArmStates.OUT),
+                        new SleepAction(0.5),
                         robot.dropClaw.clawAction(Claw.ClawStates.OPEN)
                     //    robot.arm.armAction(Arm.ArmStates.STORED)
                 ));

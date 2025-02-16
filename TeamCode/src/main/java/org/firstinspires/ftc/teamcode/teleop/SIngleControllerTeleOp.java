@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
@@ -50,34 +51,67 @@ public class SIngleControllerTeleOp extends LinearOpMode {
      //   robot.drive.pose = new Pose2d(-23, -10, 0);
         ToggleButton zoneBased = new ToggleButton(true);
         ToggleButton clawClose = new ToggleButton(false);
+        ToggleButton specimenState = new ToggleButton(false);
+        ToggleButton wristRotateToggle = new ToggleButton(false);
         waitForStart();
         while (!isStopRequested()) {
             if (!gamepad1.touchpad) {
                 drivetrain.joystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_bumper, false, gamepad1.left_bumper);
             }
-            robot.lift.manualControl(gamepad2.left_stick_y, false, false, false);
+        //    robot.lift.manualControl(gamepad2.left_stick_y, false, false, false);
+            robot.hLift.manualControl(gamepad1.right_trigger-gamepad1.left_trigger);
+
             if (gamepad1.dpad_down) {
                 actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
-            } else if (gamepad1.dpad_up) {
-                actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
             } else if (gamepad1.dpad_left) {
-                actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKE));
+                actionRunner.addAction(robot.wrist.wristAction(Wrist.WristStates.TRANSFER));
+            } else if (gamepad1.dpad_right) {
+                actionRunner.addAction(robot.wrist.wristAction(Wrist.WristStates.DOWN));
             }
             clawClose.toggle(gamepad1.a);
             if (clawClose.newPress) {
+                //       telemetry.log().add("ALERT1");
                 robot.claw.setPosition(Claw.ClawStates.CLOSE);
-                actionRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawAction(robot)));
+                actionRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawAction(robot, gamepad2)));
             } else if (gamepad1.b) {
-                robot.claw.setPosition(Claw.ClawStates.OPEN);
+                //does this work?
+                if (robot.arm.armState == Arm.ArmStates.TRANSFER) {
+                    robot.claw.setPosition(Claw.ClawStates.OPEN);
+                } else {
+                    robot.dropClaw.setPosition(Claw.ClawStates.OPEN);
+                }
             }
 
-            if (gamepad2.y) {
-                robot.wrist.setWristState(Wrist.WristStates.OUT);
-            } else if (gamepad2.x) {
-                robot.wrist.setWristState(Wrist.WristStates.DOWN);
+//            wristRotateToggle.toggle(gamepad1.x);
+//            if (gamepad1.y) {
+//                robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
+//            } else if (wristRotateToggle.newPress) {
+//                if (robot.wrist.rotateWristState == Wrist.RotateWristStates.MID) {
+//                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+//                } else if (robot.wrist.rotateWristState == Wrist.RotateWristStates.LEFT) {
+//                    robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
+//                } else {
+//                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+//                }
+//            }
+
+            if (gamepad1.x) {
+                robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+            } else if (gamepad1.y) {
+                robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
+            } else if (gamepad1.right_bumper) {
+                robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
             }
-            if (gamepad1.touchpad && (!actionRunner.isBusy() || gamepad1.y)) {
-              //  actionRunner.addAction(robot.huskyLens.pickUpAction(robot));
+
+            specimenState.toggle(gamepad1.touchpad);
+            if (gamepad1.left_stick_button) {
+                actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
+            } else if (gamepad1.right_stick_button && !actionRunner.isBusy()) {
+                if (!specimenState.state) {
+                    actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_BASKET));
+                } else {
+                    actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
+                }
             }
 
 //            if (Math.abs(robot.drive.pose.position.x) > 54 && Math.abs(robot.drive.pose.position.y) > 52 && Math.abs((Math.toDegrees(robot.drive.pose.heading.toDouble())%360)-225) < 10 && robot.currentState == Robot.RobotStates.HIGH_BASKET) {

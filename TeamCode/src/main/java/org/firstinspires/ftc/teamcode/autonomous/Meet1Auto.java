@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.HorizontalLift;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 
 @Autonomous
@@ -26,6 +27,7 @@ public class Meet1Auto extends LinearOpMode {
         Actions.runBlocking(robot.robotAction(Robot.RobotStates.DEFAULT));
         robot.wrist.setWristState(Wrist.WristStates.OUT);
         robot.arm.setState(Arm.ArmStates.TRANSFER);
+        robot.hLift.setState(HorizontalLift.HLiftStates.STORED);
         Action autoActionSpec = robot.createTrajectoryPlanner()
                 .dropSpecimen()
                 .pickNeutral(0)
