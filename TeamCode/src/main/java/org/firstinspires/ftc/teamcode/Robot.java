@@ -63,6 +63,7 @@ public class Robot {
 
     public enum LowerRobotStates {
         INTAKE (HorizontalLift.HLiftStates.MAX, Wrist.WristStates.DOWN, Wrist.RotateWristStates.MID),
+        STORED (HorizontalLift.HLiftStates.MAX, Wrist.WristStates.OUT, Wrist.RotateWristStates.MID),
 
         TRANSFER (HorizontalLift.HLiftStates.STORED, Wrist.WristStates.TRANSFER, Wrist.RotateWristStates.MID);
 
@@ -92,6 +93,7 @@ public class Robot {
     public RobotStates currentState = RobotStates.DEFAULT;
 
     public Pose2d startingPos;
+    Telemetry telemetry;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, AutoPos autoPos) {
         this.lift = new Lift(hardwareMap, telemetry, false);
@@ -106,6 +108,7 @@ public class Robot {
         this.startingPos = new Pose2d(8*autoPos.xMult, 63* autoPos.yMult, Math.toRadians(90* autoPos.yMult));
         this.drive = new MecanumDrive(hardwareMap, startingPos);
         this.autoPos = autoPos;
+        this.telemetry = telemetry;
 
     }
 
@@ -187,15 +190,23 @@ public class Robot {
     public  Action autoPickUpAction() {
         return telemetryPacket -> {
             double translationalValue = limelight.getTranslationalValue();
-            if (translationalValue < 5 && wrist.rotateWristState == limelight.getWristRotateState()) {
+            if (translationalValue < 10 && wrist.rotateWristState == limelight.getWristRotateState()) {
+                telemetry.log().add("found closing claw "+translationalValue);
                 claw.setPosition(Claw.ClawStates.CLOSE);
                 return false;
-            } else if (translationalValue < 5) {
+            } else if (translationalValue < 10) {
+                telemetry.log().add("found block "+translationalValue);
+                limelight.snapshot();
                 hLift.manualControl(0);
                 wrist.setRotateState(limelight.getWristRotateState());
+                if (limelight.getWristRotateState() != Wrist.RotateWristStates.MID) {
+                    hLift.adjustPosition(0.05);
+                }
             } else {
-                hLift.manualControl(translationalValue/100);
+                hLift.manualControl(0.25);
             }
+            telemetry.addData("translationalValue", translationalValue);
+            telemetry.update();
             return true;
         };
     }

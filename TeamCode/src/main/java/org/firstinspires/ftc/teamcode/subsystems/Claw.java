@@ -118,6 +118,31 @@ public class Claw extends Subsystem{
         };
     }
 
+    public Action autoClawAction(Robot robot, Gamepad gamepad, Action followUpAction) {
+        return new Action() {
+
+            TeleopActionRunner actionRunner;
+            boolean init = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!init) {
+                    actionRunner = new TeleopActionRunner();
+                    if (getPos() > 320 || gamepad.dpad_right) {
+                        actionRunner.addAction(new SequentialAction(followUpAction));
+                    } else {
+                        setPosition(ClawStates.OPEN);
+                        gamepad.rumbleBlips(1);
+                        return false;
+                    }
+                    init = true;
+                }
+                actionRunner.update();
+                telemetry.addData("claw runner", actionRunner.isBusy());
+                return actionRunner.isBusy();
+            }
+        };
+    }
+
 //    public Action autoClawActionSuper(Robot robot) {
 //        Action action = robot.drive.actionBuilder(robot.drive.pose)
 //                .strafeToLinearHeading(new Vector2d(-48, -12), Math.toRadians(0))

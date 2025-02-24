@@ -15,6 +15,10 @@ public class Limelight extends Subsystem {
         limelight3A.start();
     }
 
+    public void snapshot() {
+        limelight3A.captureSnapshot(String.valueOf(System.currentTimeMillis()));
+    }
+
     public double getRotationalValue() {
         LLResult result = limelight3A.getLatestResult();
         if (result != null) {
@@ -22,28 +26,42 @@ public class Limelight extends Subsystem {
                 return Math.abs(result.getTx() / result.getTy());
             }
         }
-        return 0;
+        return 10;
     }
 
     public Wrist.RotateWristStates getWristRotateState() {
-        double rotationalValue = getRotationalValue();
-        if (rotationalValue > 1.5) {
-           return Wrist.RotateWristStates.MID;
-        } else if (rotationalValue > 1.1) {
-            return Wrist.RotateWristStates.RIGHT;
+        double x = getTranslationalXValue();
+        double y = getTranslationalYValue();
+        if (x < -7) {
+           return Wrist.RotateWristStates.RIGHT;
         } else {
-            return Wrist.RotateWristStates.LEFT;
+            return Wrist.RotateWristStates.MID;
         }
     }
 
-    public double getTranslationalValue() {
+    public double getTranslationalYValue() {
         LLResult result = limelight3A.getLatestResult();
         if (result != null) {
             if (result.isValid()) {
                 return result.getTy();
             }
         }
-        return 0;
+        return 10;
+    }
+    public double getTranslationalXValue() {
+        LLResult result = limelight3A.getLatestResult();
+        if (result != null) {
+            if (result.isValid()) {
+                return result.getTx();
+            }
+        }
+        return 10;
+    }
+
+    public double getTranslationalValue() {
+        double x = getTranslationalXValue();
+        double y = getTranslationalYValue();
+        return Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
     }
 
 

@@ -55,6 +55,12 @@ public class HorizontalLift extends Subsystem {
         rightHLift.setPosition(state.rightPos);
     }
 
+    public void adjustPosition(double delta) {
+        currentPos += delta;
+        rightHLift.setPosition(currentPos);
+        leftHLift.setPosition(HLiftStates.MAX.rightPos - currentPos);
+    }
+
     public void manualControl(double power) {
         if (power != 0) {
             currentPos = Math.min(Math.max(currentPos + Math.pow(power, 3)*0.05, 0), HLiftStates.MAX.rightPos);

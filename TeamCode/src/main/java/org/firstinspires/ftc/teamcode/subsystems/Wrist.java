@@ -10,6 +10,7 @@ public class Wrist extends Subsystem{
 
     public enum WristStates {
         DOWN(0),
+        DOWNTELE(0.15),
         WALL (0.5),
         OUT(0.65),
         TRANSFER(0.9);

@@ -66,7 +66,7 @@ public class SIngleControllerTeleOp extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 actionRunner.addAction(robot.wrist.wristAction(Wrist.WristStates.TRANSFER));
             } else if (gamepad1.dpad_right) {
-                actionRunner.addAction(robot.wrist.wristAction(Wrist.WristStates.DOWN));
+                actionRunner.addAction(robot.wrist.wristAction(Wrist.WristStates.DOWNTELE));
             }
             clawClose.toggle(gamepad1.a);
             if (clawClose.newPress) {
@@ -99,7 +99,7 @@ public class SIngleControllerTeleOp extends LinearOpMode {
                 robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
             } else if (gamepad1.y) {
                 robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
-            } else if (gamepad1.right_bumper) {
+            } else if (gamepad1.left_bumper) {
                 robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
             }
 

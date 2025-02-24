@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.util.TeleopActionRunner;
 
@@ -23,10 +26,18 @@ public class LimelightTest extends LinearOpMode {
                actionRunner.addAction(robot.autoRotateAction(gamepad2));
             }
             if (gamepad2.touchpad && !actionRunner.isBusy()) {
-                actionRunner.addAction(robot.autoPickUpAction());
+                actionRunner.addAction(new SequentialAction(robot.hLift.hLiftAnalogAction(0.2), robot.wrist.wristAction(Wrist.WristStates.DOWN), new SleepAction(0.2),robot.autoPickUpAction()));
+            }
+
+            if (gamepad2.b) {
+                robot.claw.setPosition(Claw.ClawStates.OPEN);
+            }
+            if (gamepad2.dpad_down) {
+                robot.wrist.setWristState(Wrist.WristStates.DOWN);
             }
             telemetry.addData("rotationalValue", robot.limelight.getRotationalValue());
-            telemetry.addData("translationalValue", robot.limelight.getTranslationalValue());
+            telemetry.addData("translationalYValue", robot.limelight.getTranslationalYValue());
+            telemetry.addData("translationalXValue", robot.limelight.getTranslationalXValue());
             actionRunner.update();
             telemetry.update();
         }

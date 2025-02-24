@@ -32,7 +32,7 @@ public class Meet1AutoCursed extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, telemetry, autoPos );
 
         Action autoAction = robot.createTrajectoryPlanner()
-                .dropSpecimen(0)
+                .dropSpecimen()
                 .dragSpecimen(0)
                 .dragSpecimen(1)
           //      .dragSpecimen(2)
