@@ -47,8 +47,8 @@ public class Meet1Auto extends LinearOpMode {
                 .dropNet()
                 .pickNeutral(2)
                 .dropNet()
-                .submersiblePickup()
-                .dunk()
+//                .submersiblePickup()
+//                .dunk()
                 .park()
                 //  .ascend()
                 .builder.build();

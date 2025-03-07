@@ -48,7 +48,7 @@ public class TeleOp extends LinearOpMode {
                 }
             } else if (gamepad2.dpad_left) {
               //  actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKE));
-                robot.wrist.setWristState(Wrist.WristStates.DOWN);
+                robot.wrist.setWristState(Wrist.WristStates.DOWNTELE);
             } else if (gamepad2.dpad_right) {
                 robot.wrist.setWristState(Wrist.WristStates.OUT);
                 //override the automated transfer
@@ -70,25 +70,25 @@ public class TeleOp extends LinearOpMode {
 //            } else if (gamepad2.b) {
 //                robot.dropClaw.setPosition(Claw.ClawStates.OPEN);
 //            }
-//            wristRotateToggle.toggle(gamepad2.x);
-//            if (gamepad2.y) {
-//                robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
-//            } else if (wristRotateToggle.newPress) {
-//                if (robot.wrist.rotateWristState == Wrist.RotateWristStates.MID) {
-//                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
-//                } else if (robot.wrist.rotateWristState == Wrist.RotateWristStates.LEFT) {
-//                    robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
-//                } else {
-//                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
-//                }
-//            }
-            if (gamepad2.x) {
-                robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
-            } else if (gamepad2.y) {
-                robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
-            } else if (gamepad2.right_bumper) {
+            wristRotateToggle.toggle(gamepad2.x);
+            if (gamepad2.y) {
                 robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
+            } else if (wristRotateToggle.newPress) {
+                if (robot.wrist.rotateWristState == Wrist.RotateWristStates.MID) {
+                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+                } else if (robot.wrist.rotateWristState == Wrist.RotateWristStates.LEFT) {
+                    robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
+                } else {
+                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+                }
             }
+//            if (gamepad2.x) {
+//                robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+//            } else if (gamepad2.y) {
+//                robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
+//            } else if (gamepad2.right_bumper) {
+//                robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
+//            }
             clawClose.toggle(gamepad2.a);
             if (clawClose.newPress) {
          //       telemetry.log().add("ALERT1");

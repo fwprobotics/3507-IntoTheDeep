@@ -2,6 +2,8 @@ package com.example.meepmeeptesting;
 
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -27,16 +29,23 @@ public class MeepMeepTesting {
 //              //  .splineToLinearHeading(new Pose2d(-54, -52, Math.toRadians(180)), Math.toRadians(225))
 //                .build());
         Robot robot = new Robot(myBot, Robot.AutoPos.REDHUMAN);
-        myBot.runAction(robot.createTrajectoryPlanner()
-                        .dropSpecimen()
-                        .pickNeutral(0)
-                        .dropNet()
-                .pickNeutral(1)
-                .dropNet()
-                .pickNeutral(2)
-                .dropNet()
-                        .ascend()
-                .builder.build());
+//        myBot.runAction(robot.createTrajectoryPlanner()
+//                        .dropSpecimen()
+//                        .pickNeutral(0)
+//                        .dropNet()
+//                .pickNeutral(1)
+//                .dropNet()
+//                .pickNeutral(2)
+//                .dropNet()
+//                        .ascend()
+//                .builder.build());
+
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-20, -12, 0))
+                        .setReversed(true)
+                                .splineToLinearHeading(new Pose2d(-56, -57, Math.toRadians(45)), Math.toRadians(225), new TranslationalVelConstraint(100), new ProfileAccelConstraint(-20, 20))
+
+                .build()
+        );
 
 //        myBot.runAction(robot.createTrajectoryPlanner()
 //                        .dropSpecimen()

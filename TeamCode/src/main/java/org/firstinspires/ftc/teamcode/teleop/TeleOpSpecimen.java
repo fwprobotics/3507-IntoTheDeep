@@ -38,13 +38,18 @@ public class TeleOpSpecimen extends LinearOpMode {
             robot.hLift.manualControl(gamepad1.right_trigger-gamepad1.left_trigger);
             scoreState.toggle(gamepad2.touchpad);
             if (gamepad2.dpad_down) {
-                actionRunner.addAction( robot.robotAction(Robot.RobotStates.DEFAULT));
+                if (!scoreState.state) {
+                    actionRunner.addAction(robot.robotAction(Robot.RobotStates.DEFAULT));
+                } else {
+                    actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKESPEC));
+
+                }
             } else if (gamepad2.dpad_up && !actionRunner.isBusy()) {
                 //reserved for side pickup
-               actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER));
+               actionRunner.addAction(robot.robotAction(Robot.RobotStates.HIGH_CHAMBER_TELE));
             } else if (gamepad2.dpad_left) {
               //  actionRunner.addAction(robot.robotAction(Robot.RobotStates.INTAKE));
-                robot.wrist.setWristState(Wrist.WristStates.DOWN);
+                robot.wrist.setWristState(Wrist.WristStates.DOWNTELE);
             } else if (gamepad2.dpad_right) {
                 robot.wrist.setWristState(Wrist.WristStates.OUT);
                 //override the automated transfer
@@ -66,34 +71,38 @@ public class TeleOpSpecimen extends LinearOpMode {
 //            } else if (gamepad2.b) {
 //                robot.dropClaw.setPosition(Claw.ClawStates.OPEN);
 //            }
-//            wristRotateToggle.toggle(gamepad2.x);
-//            if (gamepad2.y) {
-//                robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
-//            } else if (wristRotateToggle.newPress) {
-//                if (robot.wrist.rotateWristState == Wrist.RotateWristStates.MID) {
-//                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
-//                } else if (robot.wrist.rotateWristState == Wrist.RotateWristStates.LEFT) {
-//                    robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
-//                } else {
-//                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
-//                }
-//            }
-            if (gamepad2.x) {
-                robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
-            } else if (gamepad2.y) {
-                robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
-            } else if (gamepad2.right_bumper) {
+            wristRotateToggle.toggle(gamepad2.x);
+            if (gamepad2.y) {
                 robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
+            } else if (wristRotateToggle.newPress) {
+                if (robot.wrist.rotateWristState == Wrist.RotateWristStates.MID) {
+                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+                } else if (robot.wrist.rotateWristState == Wrist.RotateWristStates.LEFT) {
+                    robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
+                } else {
+                    robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+                }
             }
+//            if (gamepad2.x) {
+//                robot.wrist.setRotateState(Wrist.RotateWristStates.LEFT);
+//            } else if (gamepad2.y) {
+//                robot.wrist.setRotateState(Wrist.RotateWristStates.RIGHT);
+//            } else if (gamepad2.right_bumper) {
+//                robot.wrist.setRotateState(Wrist.RotateWristStates.MID);
+//            }
             clawClose.toggle(gamepad2.a);
             if (clawClose.newPress) {
          //       telemetry.log().add("ALERT1");
-                robot.claw.setPosition(Claw.ClawStates.CLOSE);
-                if (scoreState.state) {
-                    actionRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawAction(robot, gamepad2)));
-                } else {
-                    actionRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawAction(robot, gamepad2, robot.lowerRobotAction(Robot.LowerRobotStates.STORED))));
+                if (!scoreState.state) {
+                    robot.claw.setPosition(Claw.ClawStates.CLOSE);
+                    if (scoreState.state) {
+                        actionRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawAction(robot, gamepad2)));
+                    } else {
+                        actionRunner.addAction(new SequentialAction(new SleepAction(0.25), robot.claw.autoClawAction(robot, gamepad2, robot.lowerRobotAction(Robot.LowerRobotStates.STORED))));
 
+                    }
+                } else {
+                    robot.dropClaw.setPosition(Claw.ClawStates.CLOSE);
                 }
             } else if (gamepad2.b) {
                 //does this work?

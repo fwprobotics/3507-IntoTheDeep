@@ -44,9 +44,11 @@ public class Robot {
     public enum RobotStates {
         DEFAULT (Lift.LiftStates.FLOOR, Arm.ArmStates.TRANSFER),
         INTAKE (Lift.LiftStates.FLOOR, Arm.ArmStates.TRANSFER),
+        INTAKESPEC (Lift.LiftStates.FLOOR, Arm.ArmStates.SPECPICK),
         SPECIMEN (Lift.LiftStates.SPECIMEN, Arm.ArmStates.OUT),
         LOW_CHAMBER (Lift.LiftStates.LOW_CHAMBER, Arm.ArmStates.OUT),
         HIGH_CHAMBER (Lift.LiftStates.LOW_BASKET, Arm.ArmStates.OUT),
+        HIGH_CHAMBER_TELE (Lift.LiftStates.HIGH_CHAMBER_TELE, Arm.ArmStates.OUT_TELE),
         //    LOW_BASKET,
         HIGH_BASKET (Lift.LiftStates.HIGH_BASKET, Arm.ArmStates.SAMPLE),
         HANG (Lift.LiftStates.FLOOR, Arm.ArmStates.HANG);
@@ -62,8 +64,8 @@ public class Robot {
     }
 
     public enum LowerRobotStates {
-        INTAKE (HorizontalLift.HLiftStates.MAX, Wrist.WristStates.DOWN, Wrist.RotateWristStates.MID),
-        STORED (HorizontalLift.HLiftStates.MAX, Wrist.WristStates.OUT, Wrist.RotateWristStates.MID),
+        INTAKE (HorizontalLift.HLiftStates.MAX, Wrist.WristStates.DOWNTELE, Wrist.RotateWristStates.MID),
+        STORED (HorizontalLift.HLiftStates.STORED, Wrist.WristStates.OUT, Wrist.RotateWristStates.MID),
 
         TRANSFER (HorizontalLift.HLiftStates.STORED, Wrist.WristStates.TRANSFER, Wrist.RotateWristStates.MID);
 
@@ -190,17 +192,17 @@ public class Robot {
     public  Action autoPickUpAction() {
         return telemetryPacket -> {
             double translationalValue = limelight.getTranslationalValue();
-            if (translationalValue < 10 && wrist.rotateWristState == limelight.getWristRotateState()) {
+            if (translationalValue < 5 && wrist.rotateWristState == limelight.getWristRotateState()) {
                 telemetry.log().add("found closing claw "+translationalValue);
                 claw.setPosition(Claw.ClawStates.CLOSE);
                 return false;
-            } else if (translationalValue < 10) {
+            } else if (translationalValue < 5) {
                 telemetry.log().add("found block "+translationalValue);
                 limelight.snapshot();
                 hLift.manualControl(0);
                 wrist.setRotateState(limelight.getWristRotateState());
                 if (limelight.getWristRotateState() != Wrist.RotateWristStates.MID) {
-                    hLift.adjustPosition(0.05);
+                 //   hLift.adjustPosition(0.0);
                 }
             } else {
                 hLift.manualControl(0.25);

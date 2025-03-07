@@ -30,9 +30,8 @@ public class Limelight extends Subsystem {
     }
 
     public Wrist.RotateWristStates getWristRotateState() {
-        double x = getTranslationalXValue();
-        double y = getTranslationalYValue();
-        if (x < -7) {
+        double rot = getRotationalValue();
+        if (rot > 1) {
            return Wrist.RotateWristStates.RIGHT;
         } else {
             return Wrist.RotateWristStates.MID;

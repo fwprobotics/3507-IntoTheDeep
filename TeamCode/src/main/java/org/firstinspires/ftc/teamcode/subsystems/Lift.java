@@ -20,6 +20,7 @@ public class Lift extends Subsystem {
         LOW_CHAMBER (700),
         HANG(900),
         LOW_BASKET (1050),
+        HIGH_CHAMBER_TELE (1450),
         HIGH_BASKET (2800);
 
 
@@ -101,6 +102,7 @@ public class Lift extends Subsystem {
 
     public void manualControl(double power, boolean liftUp, boolean liftDown, boolean reset) {
         setPosition += (int) Math.ceil(power*-LiftConfig.liftStep);
+        setPosition = Math.min(setPosition, 3000);
 //        if (liftUp) {
 //            setPosition = LiftStates.HIGH_BASKET.setPos;
 //        }

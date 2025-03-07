@@ -13,7 +13,8 @@ public class Arm extends Subsystem {
         HANG(0.7),
         SAMPLE (0.85),
         OUT (0.9),
-
+        OUT_TELE (0.98),
+        SPECPICK (0.98),
         TRANSFER(0); //0.65
 
         public double setPos;
